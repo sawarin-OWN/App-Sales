@@ -82,11 +82,10 @@ git remote add origin https://github.com/USERNAME/REPO.git
 git remote add origin https://github.com/saocafe31-pixel/sales-report.git
 ```
 
-ถ้าขึ้นว่า **"remote origin already exists"** แปลว่ามีการเชื่อมไว้แล้ว จะเปลี่ยน URL ได้ด้วย:
-
-```bash
-git remote set-url origin https://github.com/USERNAME/REPO.git
-```
+ถ้าขึ้นว่า **"remote origin already exists"** แปลว่าโปรเจกต์เชื่อมกับ GitHub อยู่แล้ว ไม่ต้อง add ซ้ำ  
+- ดู URL ที่ใช้อยู่: `git remote -v`  
+- ถ้าต้องการ**เปลี่ยนไปใช้ Repo อื่น** ค่อยรัน: `git remote set-url origin https://github.com/USERNAME/REPO.git`  
+- ถ้า URL ถูกต้องแล้ว แค่ **push** ได้เลย: `git push -u origin main`
 
 ### ขั้นที่ 6: Push ขึ้น GitHub ครั้งแรก
 
