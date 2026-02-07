@@ -2,13 +2,14 @@
 
 ระบบบันทึกและรายงานยอดขาย พัฒนาด้วย React, Tailwind CSS และ Supabase
 
-> 📖 **ดูคู่มือการใช้งาน**: [USER-GUIDE.md](./USER-GUIDE.md)
+> 📖 **ดูคู่มือการใช้งาน**: [USER-GUIDE.md](./USER-GUIDE.md)  
+> 🔗 **เชื่อมกับ GitHub**: [GITHUB-SETUP.md](./GITHUB-SETUP.md)  
+> 🚀 **Deploy บน Vercel**: [DEPLOY-VERCEL.md](./DEPLOY-VERCEL.md)
 
 ## 🎯 เทคโนโลยีที่ใช้
 
 - **Frontend**: React 18, Tailwind CSS, SweetAlert2, Chart.js
 - **Backend**: Supabase (Auth, Database, Storage)
-- **Deploy**: Vercel
 
 ## 📁 โครงสร้างโปรเจค
 
@@ -41,7 +42,6 @@ SALES REPORT/
 ├── package.json
 ├── tailwind.config.js
 ├── postcss.config.js
-├── vercel.json
 └── README.md
 ```
 
