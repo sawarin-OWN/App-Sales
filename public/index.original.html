@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport Settings: ป้องกันการซูมและรองรับรอยบาก (Notch) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
+  
+  <title>Sales Dashboard - POS System</title>
+  <meta name="description" content="RS Project Sales Report - ระบบรายงานยอดขาย">
+
+  <!-- ============================================ -->
+  <!-- 📱 PWA SETTINGS (หัวใจสำคัญของ Fullscreen) -->
+  <!-- ============================================ -->
+  
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Sales Report">
+  <meta name="apple-touch-fullscreen" content="yes">
+  
+  <!-- Android / Chrome -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#10b981">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Manifest & Icons -->
+  <!-- เติม ?v=3 เพื่อบังคับให้มือถือโหลดการตั้งค่าใหม่ -->
+  <link rel="manifest" href="/manifest.json?v=3">
+  
+  <link rel="icon" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
+
+  <!-- ============================================ -->
+  <!-- 🎨 STYLES & LIBS -->
+  <!-- ============================================ -->
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <style>
+    /* ตั้งค่าพื้นฐานเพื่อประสบการณ์แบบแอป */
+    html, body {
+      font-family: 'Sarabun', sans-serif;
+      /* สำคัญ: ป้องกันการดึงหน้าจอลง (Pull-to-refresh) ที่จะเผยให้เห็น Address bar */
+      overscroll-behavior-y: none !important;
+      overscroll-behavior: none !important;
+      -webkit-tap-highlight-color: transparent;
+      /* ใช้ความสูงแบบ Dynamic Viewport Height */
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      background-color: #f9fafb; /* bg-gray-50 */
+      /* ป้องกันการเลื่อนเมื่อเปิดคีย์บอร์ด */
+      position: fixed !important;
+      width: 100% !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    #root {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    /* ป้องกันการเลื่อนเมื่อ focus input (iOS Safari) */
+    input:focus,
+    textarea:focus,
+    select:focus {
+      scroll-margin-top: 0 !important;
+      scroll-margin-bottom: 0 !important;
+      /* ป้องกันการเลื่อนหน้าจอ */
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    /* Animation Classes */
+    @keyframes bounce-delay {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-bounce-delay-1 { animation: bounce-delay 1s infinite; animation-delay: 0.1s; }
+    .animate-bounce-delay-2 { animation: bounce-delay 1s infinite; animation-delay: 0.2s; }
+    .animate-bounce-delay-3 { animation: bounce-delay 1s infinite; animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+    
+    /* Splash Screen Transitions */
+    #splash-screen { transition: opacity 0.5s ease-out, visibility 0.5s ease-out; }
+    #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  </style>
+
+  <script>
+    // ============================================
+    // 🚀 AGGRESSIVE FULLSCREEN FORCE (iOS PWA Fix)
+    // ============================================
+    (function() {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isStandalone = window.navigator.standalone === true || 
+                          window.matchMedia('(display-mode: standalone)').matches;
+      
+      // Force fullscreen immediately for mobile devices
+      if (isMobile || isStandalone) {
+        // Apply fullscreen styles immediately (before React loads)
+        const applyFullscreen = () => {
+          const html = document.documentElement;
+          const body = document.body;
+          if (html && html.style) {
+            html.style.height = '100vh';
+            html.style.height = '100dvh';
+            html.style.position = 'fixed';
+            html.style.top = '0';
+            html.style.left = '0';
+            html.style.right = '0';
+            html.style.bottom = '0';
+            html.style.width = '100%';
+            html.style.overflow = 'hidden';
+            html.style.margin = '0';
+            html.style.padding = '0';
+          }
+          if (body && body.style) {
+            body.style.height = '100vh';
+            body.style.height = '100dvh';
+            body.style.position = 'fixed';
+            body.style.top = '0';
+            body.style.left = '0';
+            body.style.right = '0';
+            body.style.bottom = '0';
+            body.style.width = '100%';
+            body.style.overflow = 'hidden';
+            body.style.margin = '0';
+            body.style.padding = '0';
+          }
+          const vh = window.innerHeight * 0.01;
+          if (html && html.style) html.style.setProperty('--vh', vh + 'px');
+          if (html && isStandalone) html.classList.add('standalone-mode');
+          if (body && isStandalone) body.classList.add('standalone-mode');
+          if (html) html.classList.add('mobile-device');
+          if (body) body.classList.add('mobile-device');
+        };
+        
+        // Apply immediately
+        applyFullscreen();
+        
+        // Apply on DOM ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', applyFullscreen);
+        } else {
+          applyFullscreen();
+        }
+        
+        // Hide address bar aggressively
+        const hideAddressBar = () => {
+          const currentScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
+          window.scrollTo(0, currentScroll + 1);
+          setTimeout(() => {
+            window.scrollTo(0, currentScroll);
+          }, 10);
+        };
+        
+        // Prevent page scroll when keyboard opens (iOS Safari fix) - ULTRA AGGRESSIVE
+        const preventScrollOnInputFocus = () => {
+          let scrollPosition = 0;
+          let isLocked = false;
+          const originalHeight = window.innerHeight;
+          
+          // Lock scroll position function
+          const lockScroll = () => {
+            if (isLocked) return;
+            
+            scrollPosition = window.pageYOffset || document.documentElement.scrollTop || 0;
+            isLocked = true;
+            
+            // Lock body scroll
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollPosition}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+            
+            // Lock html scroll
+            document.documentElement.style.position = 'fixed';
+            document.documentElement.style.top = `-${scrollPosition}px`;
+            document.documentElement.style.overflow = 'hidden';
+            
+            // Lock root scroll
+            const root = document.getElementById('root');
+            if (root) {
+              root.style.position = 'fixed';
+              root.style.top = `-${scrollPosition}px`;
+              root.style.width = '100%';
+              root.style.height = '100vh';
+              root.style.height = '100dvh';
+              root.style.overflowY = 'auto';
+              root.style.overflowX = 'hidden';
+            }
+          };
+          
+          // Unlock scroll position function
+          const unlockScroll = () => {
+            if (!isLocked) return;
+            
+            const savedScroll = Math.abs(parseInt(document.body.style.top || '0'));
+            isLocked = false;
+            
+            // Unlock body scroll
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+            
+            // Unlock html scroll
+            document.documentElement.style.position = '';
+            document.documentElement.style.top = '';
+            document.documentElement.style.overflow = '';
+            
+            // Unlock root scroll
+            const root = document.getElementById('root');
+            if (root) {
+              root.style.position = 'relative';
+              root.style.top = '';
+              root.style.width = '';
+            }
+            
+            // Restore scroll position
+            window.scrollTo(0, savedScroll);
+          };
+          
+          // Use Visual Viewport API if available (modern browsers)
+          if (window.visualViewport) {
+            let lastViewportHeight = window.visualViewport.height;
+            
+            window.visualViewport.addEventListener('resize', () => {
+              const currentHeight = window.visualViewport.height;
+              const heightDiff = lastViewportHeight - currentHeight;
+              
+              // If viewport height decreased significantly, keyboard is open
+              if (heightDiff > 150) {
+                lockScroll();
+              } else if (heightDiff < -50) {
+                // Keyboard closed
+                setTimeout(() => {
+                  unlockScroll();
+                }, 100);
+              }
+              
+              lastViewportHeight = currentHeight;
+            });
+          }
+          
+          // Fallback: Use window resize (for older browsers)
+          let lastWindowHeight = window.innerHeight;
+          window.addEventListener('resize', () => {
+            const currentHeight = window.innerHeight;
+            const heightDiff = lastWindowHeight - currentHeight;
+            
+            // If window height decreased significantly, keyboard is open
+            if (heightDiff > 150) {
+              lockScroll();
+            } else if (heightDiff < -50) {
+              // Keyboard closed
+              setTimeout(() => {
+                unlockScroll();
+              }, 100);
+            }
+            
+            lastWindowHeight = currentHeight;
+          });
+          
+          // Lock scroll when input is focused
+          document.addEventListener('focusin', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+              setTimeout(() => {
+                lockScroll();
+              }, 50);
+            }
+          }, true);
+          
+          // Unlock scroll when input loses focus
+          document.addEventListener('focusout', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+              setTimeout(() => {
+                unlockScroll();
+              }, 300);
+            }
+          }, true);
+          
+          // Prevent scroll on touchmove (aggressive)
+          let touchStartY = 0;
+          document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+          }, { passive: false });
+          
+          document.addEventListener('touchmove', (e) => {
+            if (isLocked) {
+              e.preventDefault();
+              return false;
+            }
+            
+            const touchY = e.touches[0].clientY;
+            const scrollElement = document.activeElement;
+            
+            // If input is focused, prevent body scroll
+            if (scrollElement && (scrollElement.tagName === 'INPUT' || scrollElement.tagName === 'TEXTAREA')) {
+              const isScrollingInput = scrollElement.scrollHeight > scrollElement.clientHeight;
+              if (!isScrollingInput) {
+                e.preventDefault();
+                return false;
+              }
+            }
+          }, { passive: false });
+        };
+        
+        // Try multiple times
+        setTimeout(hideAddressBar, 0);
+        setTimeout(hideAddressBar, 100);
+        setTimeout(hideAddressBar, 300);
+        setTimeout(hideAddressBar, 500);
+        setTimeout(hideAddressBar, 1000);
+        
+        // Hide on scroll
+        window.addEventListener('scroll', hideAddressBar, { passive: true });
+        window.addEventListener('touchstart', hideAddressBar, { passive: true });
+        window.addEventListener('touchmove', hideAddressBar, { passive: true });
+        
+        // Prevent scroll when keyboard opens
+        preventScrollOnInputFocus();
+        
+        // Re-apply on resize/orientation change
+        window.addEventListener('resize', () => {
+          applyFullscreen();
+          setTimeout(hideAddressBar, 100);
+        });
+        window.addEventListener('orientationchange', () => {
+          setTimeout(() => {
+            applyFullscreen();
+            hideAddressBar();
+          }, 300);
+        });
+      }
+    })();
+    
+    // Register Service Worker (Standard PWA)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('SW registered'))
+          .catch(err => console.log('SW failed', err));
+      });
+    }
+  </script>
+</head>
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  
+  <!-- ==================== SPLASH SCREEN ==================== -->
+  <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
+    <div class="relative mb-10">
+      <div class="absolute inset-0 bg-emerald-400 rounded-full opacity-20 animate-ping"></div>
+      <div class="absolute -inset-1 bg-emerald-100 rounded-full opacity-60 animate-pulse"></div>
+      <img 
+        src="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png" 
+        alt="App Logo" 
+        class="relative w-28 h-28 rounded-full shadow-2xl object-cover border-[6px] border-white z-10"
+        onerror="this.src='https://placehold.co/150x150/10b981/ffffff?text=POS'"
+      >
+    </div>
+
+    <div class="text-center mb-8 animate-fade-in-up">
+      <h1 class="text-2xl font-bold text-gray-800 tracking-wide mb-1">Sales Dashboard</h1>
+      <p class="text-sm text-gray-400">ระบบรายงานยอดขาย</p>
+    </div>
+
+    <div class="flex items-center space-x-2 mb-4">
+      <div class="w-3 h-3 bg-emerald-500 rounded-full animate-bounce-delay-1 shadow-sm"></div>
+      <div class="w-3 h-3 bg-emerald-500 rounded-full animate-bounce-delay-2 shadow-sm"></div>
+      <div class="w-3 h-3 bg-emerald-500 rounded-full animate-bounce-delay-3 shadow-sm"></div>
+    </div>
+
+    <p class="text-gray-400 text-xs font-sarabun mt-2 animate-pulse">กำลังตรวจสอบข้อมูล...</p>
+    <p class="absolute bottom-10 text-gray-300 text-[10px] font-light tracking-widest">VERSION 1.0.6</p>
+  </div>
+  <!-- ======================================================= -->
+  
+  <div id="root"></div>
+  
+  <script>
+    // Logic ซ่อน Splash Screen
+    window.addEventListener('load', function() {
+      // แสดงอย่างน้อย 1.5 วินาที เพื่อความสวยงาม
+      setTimeout(function() {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.classList.add('hidden');
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 1500);
+    });
+
+    // Fallback: ถ้า React โหลดเสร็จและแสดงผลแล้ว ให้ซ่อน Splash ทันที (ไม่ต้องรอ load event)
+    const observer = new MutationObserver(function(mutations) {
+      const root = document.getElementById('root');
+      if (root && root.children.length > 0) {
+        setTimeout(function() {
+          const splash = document.getElementById('splash-screen');
+          if (splash && !splash.classList.contains('hidden')) {
+            splash.classList.add('hidden');
+            setTimeout(() => splash.remove(), 500);
+          }
+        }, 800);
+        observer.disconnect();
+      }
+    });
+    
+    const root = document.getElementById('root');
+    if (root) observer.observe(root, { childList: true, subtree: true });
+  </script>
+</body>
+</html>
+

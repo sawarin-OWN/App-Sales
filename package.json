@@ -1,0 +1,49 @@
+{
+  "name": "sales-dashboard",
+  "version": "1.0.0",
+  "description": "Sales Dashboard - React + Google Apps Script",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "prebuild": "node scripts/copy-production-html.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.94.1",
+    "chart.js": "^4.4.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "sweetalert2": "^11.10.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "react-scripts": "5.0.1",
+    "tailwindcss": "^3.3.5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ],
+    "rules": {
+      "react-hooks/exhaustive-deps": "warn"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

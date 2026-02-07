@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  
+  <!-- ============================================ -->
+  <!-- 📱 VIEWPORT & PWA META TAGS -->
+  <!-- ============================================ -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
+  
+  <title>Sales Dashboard - POS System</title>
+  <meta name="description" content="RS Project Sales Report - ระบบรายงานยอดขาย">
+
+  <!-- iOS Safari PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Sales Report">
+  <meta name="apple-touch-fullscreen" content="yes">
+  
+  <!-- Android / Chrome PWA -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#10b981">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Manifest & Icons (โฮมสกรีน + ไอคอนแอป) -->
+  <link rel="manifest" href="/manifest.json?v=6">
+  <link rel="icon" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
+
+  <!-- ============================================ -->
+  <!-- 🎨 STYLES & FONTS -->
+  <!-- ============================================ -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <style>
+    /* ============================================ */
+    /* 🎯 FULLSCREEN & SCROLL LOCK (CRITICAL) */
+    /* ============================================ */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    html, body {
+      font-family: 'Sarabun', sans-serif;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      overflow: hidden !important;
+      overscroll-behavior-y: none !important;
+      overscroll-behavior: none !important;
+      background-color: #f9fafb;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    
+    #root {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    /* ป้องกันการเลื่อนเมื่อ focus input */
+    input:focus,
+    textarea:focus,
+    select:focus {
+      scroll-margin-top: 0 !important;
+      scroll-margin-bottom: 0 !important;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    /* ============================================ */
+    /* 📱 SAFE AREA SUPPORT (iOS Notch & Status Bar) */
+    /* ============================================ */
+    .pt-safe {
+      padding-top: max(env(safe-area-inset-top, 0px), 20px);
+    }
+
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* Header Safe Area Support - ป้องกันทับ Status Bar */
+    header {
+      top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+      padding-top: 8px !important;
+      left: 0 !important;
+      right: 0 !important;
+      position: fixed !important;
+      z-index: 40 !important;
+    }
+
+    /* Main content spacing for fixed header */
+    main {
+      margin-top: calc(env(safe-area-inset-top, 0px) + 136px) !important;
+    }
+
+    /* Root - ไม่ต้องมี padding-top เพราะ header จะจัดการเอง */
+    #root {
+      top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    /* ============================================ */
+    /* 🎨 SPLASH SCREEN ANIMATIONS */
+    /* ============================================ */
+    @keyframes bounce-delay {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-bounce-delay-1 { animation: bounce-delay 1s infinite; animation-delay: 0.1s; }
+    .animate-bounce-delay-2 { animation: bounce-delay 1s infinite; animation-delay: 0.2s; }
+    .animate-bounce-delay-3 { animation: bounce-delay 1s infinite; animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+    
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 99999;
+      /* โทนสีเข้ากับโลโก้: teal/blue-green ให้กลมกลืนกับกราฟและวงกลมในไอคอน */
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #115e59 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    }
+    
+    #splash-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  </style>
+
+  <script>
+    // ============================================
+    // 🚀 FULLSCREEN & SCROLL LOCK (IMMEDIATE)
+    // ============================================
+    (function() {
+      'use strict';
+      
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isStandalone = window.navigator.standalone === true || 
+                          window.matchMedia('(display-mode: standalone)').matches;
+      
+      // Apply fullscreen immediately (ต้องเช็ค document.body ก่อน เพราะสคริปต์ใน head อาจรันก่อน body มีใน DOM)
+      const applyFullscreen = () => {
+        const html = document.documentElement;
+        const body = document.body;
+        if (html && html.style) {
+          html.style.height = '100vh';
+          html.style.height = '100dvh';
+          html.style.position = 'fixed';
+          html.style.top = '0';
+          html.style.left = '0';
+          html.style.right = '0';
+          html.style.bottom = '0';
+          html.style.width = '100%';
+          html.style.overflow = 'hidden';
+          html.style.margin = '0';
+          html.style.padding = '0';
+        }
+        if (body && body.style) {
+          body.style.height = '100vh';
+          body.style.height = '100dvh';
+          body.style.position = 'fixed';
+          body.style.top = '0';
+          body.style.left = '0';
+          body.style.right = '0';
+          body.style.bottom = '0';
+          body.style.width = '100%';
+          body.style.overflow = 'hidden';
+          body.style.margin = '0';
+          body.style.padding = '0';
+        }
+        // Set viewport height variable
+        const vh = window.innerHeight * 0.01;
+        if (html && html.style) html.style.setProperty('--vh', vh + 'px');
+        // Add classes
+        if (html && isStandalone) html.classList.add('standalone-mode');
+        if (body && isStandalone) body.classList.add('standalone-mode');
+        if (html && isMobile) html.classList.add('mobile-device');
+        if (body && isMobile) body.classList.add('mobile-device');
+      };
+      
+      // Apply immediately
+      applyFullscreen();
+      
+      // Apply on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyFullscreen);
+      } else {
+        applyFullscreen();
+      }
+      
+      // ============================================
+      // 🔒 KEYBOARD SCROLL PREVENTION (ULTRA AGGRESSIVE)
+      // ============================================
+      let scrollPosition = 0;
+      let isLocked = false;
+      let originalHeight = window.innerHeight;
+      
+      const lockScroll = () => {
+        if (isLocked) return;
+        
+        scrollPosition = window.pageYOffset || document.documentElement.scrollTop || 0;
+        isLocked = true;
+        
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollPosition}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+        document.body.style.overflow = 'hidden';
+        
+        document.documentElement.style.position = 'fixed';
+        document.documentElement.style.top = `-${scrollPosition}px`;
+        document.documentElement.style.overflow = 'hidden';
+        
+        const root = document.getElementById('root');
+        if (root) {
+          root.style.position = 'fixed';
+          root.style.top = `-${scrollPosition}px`;
+          root.style.width = '100%';
+          root.style.height = '100vh';
+          root.style.height = '100dvh';
+          root.style.overflowY = 'auto';
+          root.style.overflowX = 'hidden';
+        }
+      };
+      
+      const unlockScroll = () => {
+        if (!isLocked) return;
+        
+        const savedScroll = Math.abs(parseInt(document.body.style.top || '0'));
+        isLocked = false;
+        
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        
+        document.documentElement.style.position = '';
+        document.documentElement.style.top = '';
+        document.documentElement.style.overflow = '';
+        
+        const root = document.getElementById('root');
+        if (root) {
+          root.style.position = 'relative';
+          root.style.top = '';
+        }
+        
+        window.scrollTo(0, savedScroll);
+      };
+      
+      // Use Visual Viewport API
+      if (window.visualViewport) {
+        let lastViewportHeight = window.visualViewport.height;
+        
+        window.visualViewport.addEventListener('resize', () => {
+          const currentHeight = window.visualViewport.height;
+          const heightDiff = lastViewportHeight - currentHeight;
+          
+          if (heightDiff > 150) {
+            lockScroll();
+          } else if (heightDiff < -50) {
+            setTimeout(() => unlockScroll(), 100);
+          }
+          
+          lastViewportHeight = currentHeight;
+        });
+      }
+      
+      // Fallback: window resize
+      let lastWindowHeight = window.innerHeight;
+      window.addEventListener('resize', () => {
+        const currentHeight = window.innerHeight;
+        const heightDiff = lastWindowHeight - currentHeight;
+        
+        if (heightDiff > 150) {
+          lockScroll();
+        } else if (heightDiff < -50) {
+          setTimeout(() => unlockScroll(), 100);
+        }
+        
+        lastWindowHeight = currentHeight;
+        originalHeight = currentHeight;
+      });
+      
+      // Lock on input focus
+      document.addEventListener('focusin', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+          setTimeout(() => lockScroll(), 50);
+        }
+      }, true);
+      
+      // Unlock on input blur
+      document.addEventListener('focusout', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+          setTimeout(() => unlockScroll(), 300);
+        }
+      }, true);
+      
+      // Prevent touch scroll when locked
+      document.addEventListener('touchmove', (e) => {
+        if (isLocked) {
+          const scrollElement = document.activeElement;
+          if (scrollElement && (scrollElement.tagName === 'INPUT' || scrollElement.tagName === 'TEXTAREA')) {
+            const isScrollingInput = scrollElement.scrollHeight > scrollElement.clientHeight;
+            if (!isScrollingInput) {
+              e.preventDefault();
+              return false;
+            }
+          } else {
+            e.preventDefault();
+            return false;
+          }
+        }
+      }, { passive: false });
+      
+      // Hide address bar
+      const hideAddressBar = () => {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
+        window.scrollTo(0, currentScroll + 1);
+        setTimeout(() => window.scrollTo(0, currentScroll), 10);
+      };
+      
+      setTimeout(hideAddressBar, 0);
+      setTimeout(hideAddressBar, 100);
+      setTimeout(hideAddressBar, 300);
+      setTimeout(hideAddressBar, 500);
+      
+      window.addEventListener('scroll', hideAddressBar, { passive: true });
+      window.addEventListener('touchstart', hideAddressBar, { passive: true });
+      
+      // Update viewport height on resize
+      window.addEventListener('resize', () => {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', vh + 'px');
+        applyFullscreen();
+      });
+      
+      window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', vh + 'px');
+          applyFullscreen();
+          hideAddressBar();
+        }, 300);
+      });
+    })();
+    
+    // ============================================
+    // 🔧 SERVICE WORKER REGISTRATION
+    // ============================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('✅ Service Worker registered'))
+          .catch(err => console.log('❌ Service Worker failed', err));
+      });
+    }
+  </script>
+</head>
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  
+  <!-- ============================================ -->
+  <!-- 🎨 SPLASH SCREEN -->
+  <!-- ============================================ -->
+  <div id="splash-screen" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center">
+    <!-- Logo with Animation (ขยายไอคอนให้ใหญ่ขึ้น) -->
+    <div class="relative mb-10">
+      <div class="absolute inset-0 bg-white rounded-full opacity-20 animate-ping"></div>
+      <div class="absolute -inset-1 bg-white rounded-full opacity-40 animate-pulse"></div>
+      <img 
+        src="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png" 
+        alt="App Logo" 
+        class="relative w-44 h-44 rounded-full shadow-2xl object-cover border-[10px] border-white z-10"
+        onerror="this.src='https://placehold.co/150x150/10b981/ffffff?text=POS'"
+      >
+    </div>
+
+    <!-- App Name -->
+    <div class="text-center mb-8 animate-fade-in-up">
+      <h1 class="text-3xl font-bold text-white tracking-wide mb-2 drop-shadow-lg">
+        Sales Dashboard
+      </h1>
+      <p class="text-white/90 text-base font-medium">ระบบรายงานยอดขาย</p>
+    </div>
+
+    <!-- Loading Dots -->
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="w-4 h-4 bg-white rounded-full animate-bounce-delay-1 shadow-lg"></div>
+      <div class="w-4 h-4 bg-white rounded-full animate-bounce-delay-2 shadow-lg"></div>
+      <div class="w-4 h-4 bg-white rounded-full animate-bounce-delay-3 shadow-lg"></div>
+    </div>
+
+    <!-- Status Text -->
+    <p class="text-white/80 text-sm font-medium animate-pulse">กำลังโหลดแอปพลิเคชัน...</p>
+    
+    <!-- Version -->
+    <p class="absolute bottom-8 text-white/60 text-xs font-light tracking-widest">VERSION 1.0.7</p>
+  </div>
+  
+  <!-- ============================================ -->
+  <!-- ⚛️ REACT ROOT -->
+  <!-- ============================================ -->
+  <div id="root"></div>
+  
+  <!-- ============================================ -->
+  <!-- 🎬 SPLASH SCREEN HIDE LOGIC -->
+  <!-- ============================================ -->
+  <script>
+    // Hide splash screen when React app loads
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.classList.add('hidden');
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 1500);
+    });
+
+    // Fallback: Hide when root has content
+    const observer = new MutationObserver(function(mutations) {
+      const root = document.getElementById('root');
+      if (root && root.children.length > 0) {
+        setTimeout(function() {
+          const splash = document.getElementById('splash-screen');
+          if (splash && !splash.classList.contains('hidden')) {
+            splash.classList.add('hidden');
+            setTimeout(() => splash.remove(), 500);
+          }
+        }, 800);
+        observer.disconnect();
+      }
+    });
+    
+    const root = document.getElementById('root');
+    if (root) {
+      observer.observe(root, { childList: true, subtree: true });
+    }
+  </script>
+</body>
+</html>
+
