@@ -10,7 +10,6 @@ import DateInput from './DateInput';
 function TaxInvoices({ overrideBranchCode, overrideBranchName, allowAdminDelete }) {
   const { user } = useAuth();
   const effectiveBranchCode = overrideBranchCode ?? user?.branchCode;
-  const effectiveBranchName = overrideBranchName ?? user?.branchName;
   const { getCachedData, setCachedData, invalidateCache, invalidatePattern } = useDataCache();
   const [deletingId, setDeletingId] = useState(null);
   const getToday = () => getTodayDate();

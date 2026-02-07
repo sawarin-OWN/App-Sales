@@ -114,6 +114,7 @@ function OfficeSales() {
 
   useEffect(() => {
     if (branchCode && formData.date) loadForDate(formData.date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.date, branchCode]);
 
   const loadForDate = async (dateStr) => {

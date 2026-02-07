@@ -104,6 +104,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadData(); }, [branchCode, yearMonth, compareYearMonth]);
 
   const handleSaveVatSetting = async () => {

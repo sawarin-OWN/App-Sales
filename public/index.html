@@ -22,8 +22,8 @@
   <meta name="theme-color" content="#10b981">
   <meta name="format-detection" content="telephone=no">
 
-  <!-- Manifest & Icons (โฮมสกรีน + ไอคอนแอป) -->
-  <link rel="manifest" href="/manifest.json?v=6">
+  <!-- Manifest & Icons -->
+  <link rel="manifest" href="/manifest.json?v=5">
   <link rel="icon" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
 
@@ -156,7 +156,7 @@
       right: 0;
       bottom: 0;
       z-index: 99999;
-      /* โทนสีเข้ากับโลโก้: teal/blue-green ให้กลมกลืนกับกราฟและวงกลมในไอคอน */
+      /* โทนสีเข้ากับโลโก้: teal/blue-green */
       background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #115e59 100%);
       display: flex;
       flex-direction: column;
@@ -213,10 +213,8 @@
           body.style.margin = '0';
           body.style.padding = '0';
         }
-        // Set viewport height variable
         const vh = window.innerHeight * 0.01;
         if (html && html.style) html.style.setProperty('--vh', vh + 'px');
-        // Add classes
         if (html && isStandalone) html.classList.add('standalone-mode');
         if (body && isStandalone) body.classList.add('standalone-mode');
         if (html && isMobile) html.classList.add('mobile-device');
@@ -411,7 +409,7 @@
   <!-- 🎨 SPLASH SCREEN -->
   <!-- ============================================ -->
   <div id="splash-screen" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center">
-    <!-- Logo with Animation (ขยายไอคอนให้ใหญ่ขึ้น) -->
+    <!-- Logo with Animation -->
     <div class="relative mb-10">
       <div class="absolute inset-0 bg-white rounded-full opacity-20 animate-ping"></div>
       <div class="absolute -inset-1 bg-white rounded-full opacity-40 animate-pulse"></div>

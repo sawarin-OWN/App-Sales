@@ -11,7 +11,6 @@ import Swal from 'sweetalert2';
 function Dashboard({ overrideBranchCode, overrideBranchName }) {
   const { user } = useAuth();
   const effectiveBranchCode = overrideBranchCode ?? user?.branchCode;
-  const effectiveBranchName = overrideBranchName ?? user?.branchName;
   const isOffice = user?.role === 'office';
   const { getCachedData, setCachedData } = useDataCache();
   const [data, setData] = useState({

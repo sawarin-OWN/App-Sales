@@ -722,7 +722,6 @@ function Admin() {
         ]);
         const enableVat7 = settings.enableVat7 !== false;
         const totalSales = Number(sales?.totalSales) || 0;
-        const vatAmount = enableVat7 ? totalSales - totalSales / 1.07 : 0;
         const salesAfterVat = enableVat7 ? totalSales / 1.07 : totalSales;
         const totalDiscount = (Number(sales?.staffDiscount) || 0) + (Number(sales?.promoDiscount) || 0);
         const salesAfterDiscount = salesAfterVat - totalDiscount;
@@ -740,7 +739,6 @@ function Admin() {
             gasAPI.getOperatingExpensesForMonth(code, pnlCompareYearMonth)
           ]);
           compareTotalSales = Number(cSales?.totalSales) || 0;
-          const cVat = enableVat7 ? compareTotalSales - compareTotalSales / 1.07 : 0;
           compareSalesAfterDiscount = (enableVat7 ? compareTotalSales / 1.07 : compareTotalSales) - (Number(cSales?.staffDiscount) || 0) - (Number(cSales?.promoDiscount) || 0);
           compareTotalCogs = Number(cCogs?.totalCogs) || 0;
           compareGrossProfit = compareSalesAfterDiscount - compareTotalCogs;
