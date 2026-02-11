@@ -747,7 +747,7 @@ async function getPnlSalesSummary(branchCode, yearMonth) {
   }
 }
 
-/** COGS: ค่าใช้จ่ายประเภทซื้อของนอก (EXTERNAL) + ยอดซื้อจากใบกำกับภาษี + บิลส่วนกลาง */
+/** COGS: ยอดค่าใช้จ่ายทุกประเภทจากหน้ากรอกค่าใช้จ่าย (ในช่วงเวลาที่เลือก) + ยอดซื้อจากใบกำกับภาษี + บิลส่วนกลาง */
 async function getPnlCogsSummary(branchCode, yearMonth) {
   try {
     const [y, m] = yearMonth.split('-');
@@ -756,7 +756,7 @@ async function getPnlCogsSummary(branchCode, yearMonth) {
     const endDate = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
 
     let expensePurchase = 0;
-    const { data: expRows } = await supabase.from('Expenses').select('*').eq('Branch Code', (branchCode || '').toString().trim()).eq('Type', 'EXTERNAL');
+    const { data: expRows } = await supabase.from('Expenses').select('*').eq('Branch Code', (branchCode || '').toString().trim());
     for (const row of expRows || []) {
       const date = row.Date ? toYMD(row.Date) : '';
       if (date && date >= startDate && date <= endDate) expensePurchase += Number(row.Amount) || 0;

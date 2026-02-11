@@ -27,40 +27,57 @@ function Layout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="min-h-[100dvh] bg-gray-50" style={{ minHeight: 'calc(100dvh + 1px)' }}>
-      {/* Header with Safe Area Support */}
+    <div 
+      className="min-h-0 flex flex-col flex-1 w-full overflow-hidden"
+      style={{ backgroundColor: '#f0fdf4', minHeight: '100dvh', height: '100%' }}
+    >
+      {/* Navbar แถบเมนูด้านบน — อยู่นอก scroll container เพื่อไม่ให้มือถือวาดเนื้อหาซ้อนทับ */}
       <header 
-        className="bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-lg fixed left-0 right-0 z-40"
+        className="fixed left-0 right-0 w-full text-gray-800 shadow-lg border-b border-gray-200 overflow-hidden nav-bar-opaque"
         style={{
           top: `calc(env(safe-area-inset-top, 0px) + 8px)`,
           paddingTop: '8px',
-          paddingBottom: '12px'
+          paddingBottom: '12px',
+          backgroundColor: '#ffffff',
+          backgroundImage: 'none',
+          zIndex: 9999,
+          boxShadow: 'inset 0 0 0 9999px #ffffff'
         }}
       >
-        <div className="container mx-auto px-4 py-2">
+        {/* ชั้นพื้นหลังทึบ (inline style) ป้องกันมือถือแสดงผลโปร่งใส — ขาว */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{ backgroundColor: '#ffffff', boxShadow: 'inset 0 0 0 9999px #ffffff' }}
+          aria-hidden="true"
+        />
+        <div className="container mx-auto px-4 py-2 relative z-10">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg p-2.5 shadow-lg">
-                <i className="fas fa-chart-line text-xl text-white"></i>
+              <div className="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0" style={{ minWidth: '2.75rem', minHeight: '2.75rem' }}>
+                <img
+                  src="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(7).png"
+                  alt="Logo"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <h1 className="font-bold text-lg">
-                  {(user?.email?.toLowerCase().includes('admin') || user?.role === 'admin') ? 'หลังบ้าน (Admin)' : user?.branchName || 'Sales Dashboard'}
+                  {(user?.email?.toLowerCase().includes('admin') || user?.role === 'admin') ? 'หลังบ้าน (Admin)' : user?.branchName || 'KebYod App'}
                 </h1>
-                <p className="text-xs text-gray-400 font-mono">{user?.role === 'admin' ? '' : (user?.branchCode || '')}</p>
+                <p className="text-xs text-gray-600 font-mono">{user?.role === 'admin' ? '' : (user?.branchCode || '')}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => window.location.reload()}
-                className="p-2 hover:bg-white/10 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 rounded-lg transition text-gray-700"
                 title="รีเฟรช"
               >
                 <i className="fas fa-sync-alt text-xl"></i>
               </button>
               <button
                 onClick={handleLogout}
-                className="p-2 hover:bg-white/10 rounded-lg transition"
+                className="p-2 hover:bg-green-200/80 rounded-lg transition text-gray-700"
                 title="ออกจากระบบ"
               >
                 <i className="fas fa-sign-out-alt text-xl"></i>
@@ -69,8 +86,11 @@ function Layout() {
           </div>
         </div>
 
-        {/* Menu Tabs — แอดมินเท่านั้นเห็น หลังบ้าน; สำนักงานเห็นแค่ยอดขายสำนักงาน; สาขาเห็นเฉพาะเมนูสาขา (ไม่มีหลังบ้าน) */}
-        <div className="border-t border-gray-700 bg-gray-800">
+        {/* Menu Tabs — แถบแท็บพื้นหลังทึบ (inline + boxShadow) */}
+        <div 
+          className="border-t border-blue-800/30 relative z-10"
+          style={{ backgroundColor: '#12467d', boxShadow: 'inset 0 0 0 9999px #12467d' }}
+        >
           <div className="container mx-auto px-4">
             <div className="flex overflow-x-auto space-x-1">
               {user?.role === 'office' ? (
@@ -78,7 +98,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/dashboard')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/dashboard') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/dashboard') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-chart-line mr-2"></i>ภาพรวม
@@ -86,7 +106,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/office-sales')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/office-sales') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/office-sales') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-building mr-2"></i>ยอดขายสำนักงาน
@@ -94,7 +114,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/expenses')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/expenses') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/expenses') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-file-invoice-dollar mr-2"></i>ค่าใช้จ่าย
@@ -102,7 +122,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/tax-invoices')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/tax-invoices') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/tax-invoices') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-file-invoice mr-2"></i>ใบกำกับภาษี
@@ -110,7 +130,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/profit-loss')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/profit-loss') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/profit-loss') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-balance-scale mr-2"></i>งบกำไรขาดทุน
@@ -120,7 +140,7 @@ function Layout() {
                 <button
                   onClick={() => navigate('/admin')}
                   className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                    isActive('/admin') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                    isActive('/admin') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                   }`}
                 >
                   <i className="fas fa-user-shield mr-2"></i>หลังบ้าน
@@ -130,7 +150,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/dashboard')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/dashboard') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/dashboard') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-chart-line mr-2"></i>ภาพรวม
@@ -138,7 +158,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/sales')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/sales') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/sales') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-cash-register mr-2"></i>ปิดยอด
@@ -146,7 +166,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/expenses')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/expenses') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/expenses') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-file-invoice-dollar mr-2"></i>ค่าใช้จ่าย
@@ -154,7 +174,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/deposits')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/deposits') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/deposits') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-university mr-2"></i>นำฝาก
@@ -162,7 +182,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/tax-invoices')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/tax-invoices') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/tax-invoices') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-file-invoice mr-2"></i>ใบกำกับภาษี
@@ -170,7 +190,7 @@ function Layout() {
                   <button
                     onClick={() => navigate('/profit-loss')}
                     className={`tab-btn flex-none px-6 py-3 text-sm font-bold border-b-2 ${
-                      isActive('/profit-loss') ? 'border-white active' : 'border-transparent hover:border-gray-500'
+                      isActive('/profit-loss') ? 'border-yod-green active' : 'border-transparent hover:border-yod-green-pale'
                     }`}
                   >
                     <i className="fas fa-balance-scale mr-2"></i>งบกำไรขาดทุน
@@ -183,12 +203,12 @@ function Layout() {
         </div>
       </header>
 
-      {/* Main Content - Add margin-top to account for fixed header */}
+      {/* Main เป็น scroll container เดียว — header อยู่นอก main จึงไม่ซ้อนบนมือถือ */}
       <main 
-        className="container mx-auto px-4 py-6 space-y-6 pb-20" 
+        className="container mx-auto px-4 py-6 space-y-6 pb-20 flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
         style={{ 
-          minHeight: 'calc(calc(var(--vh, 1vh) * 100) - 200px)',
-          marginTop: 'calc(env(safe-area-inset-top, 0px) + 136px)'
+          marginTop: 'calc(env(safe-area-inset-top, 0px) + 136px)',
+          WebkitOverflowScrolling: 'touch'
         }}
       >
         <Outlet />

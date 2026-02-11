@@ -3,6 +3,7 @@ import { gasAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getTodayDate, formatDateForDisplay } from '../utils/dateUtils';
 import Swal from 'sweetalert2';
+import DateInput from './DateInput';
 
 /** โครงสร้างส่วนที่ 1 สำหรับ Office (จากหน้ายอดขายสำนักงาน) */
 const OFFICE_PNL_RANGSAN = [
@@ -276,7 +277,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
     ].map(r => { const d = diff(r.curr, r.comp); const pctVal = pctChange(r.curr, r.comp); const trClass = r.rowTotal ? ' class="row-total"' : ''; return `<tr${trClass}><td class="cell ${r.indent || ''}">${r.label}</td><td class="cell num">${formatNum(r.curr)}</td><td class="cell num">${formatNum(r.comp)}</td><td class="cell num${diffClass(d)}">${d >= 0 ? '+' : ''}${formatNum(d)}</td><td class="cell num pct${pctClass(r.curr, r.comp)}">${pctVal}</td></tr>`; }).join('')) : '';
     const section2RowsWithCompare = hasCompare ? [
       { label: 'ยอดสั่งซื้อวัตถุดิบอื่นๆ (ค่าใช้จ่าย+ใบกำกับ)', curr: (safeCogs.expensePurchase || 0) + (safeCogs.taxInvoicePurchase || 0), comp: cExpenseTax },
-      { label: '　จากหน้ากรอกค่าใช้จ่าย (ซื้อของนอก)', curr: safeCogs.expensePurchase, comp: cc.expensePurchase, indent: 'indent-2' },
+      { label: '　จากหน้ากรอกค่าใช้จ่าย (ทุกประเภท)', curr: safeCogs.expensePurchase, comp: cc.expensePurchase, indent: 'indent-2' },
       { label: '　จากหน้าใบกำกับภาษี', curr: safeCogs.taxInvoicePurchase, comp: cc.taxInvoicePurchase, indent: 'indent-2' },
       { label: 'ยอดเบิกใช้วัตถุดิบส่วนกลาง', curr: safeCogs.centralBillsTotal, comp: cc.centralBillsTotal },
       { label: 'หัก: ต้นทุนสินค้าขาย (COGS)', curr: totalCogs, comp: compareTotalCogs, rowTotal: true }
@@ -401,7 +402,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
     <table>
     ${hasCompare ? `<thead><tr><th class="cell">รายการ</th><th class="cell num">${monthLabel}</th><th class="cell num">${compareMonthLabel}</th><th class="cell num">ผลต่าง</th><th class="cell num pct">% เปลี่ยน</th></tr></thead><tbody>${section2RowsWithCompare}</tbody>` : `
       <tr><td class="cell">ยอดสั่งซื้อวัตถุดิบอื่นๆ (ค่าใช้จ่าย+ใบกำกับ)</td><td class="cell num">${formatNum((safeCogs.expensePurchase || 0) + (safeCogs.taxInvoicePurchase || 0))}</td><td class="cell num pct">${pct((safeCogs.expensePurchase || 0) + (safeCogs.taxInvoicePurchase || 0), baseRevenue)}</td></tr>
-      <tr><td class="cell indent-2">จากหน้ากรอกค่าใช้จ่าย (ซื้อของนอก)</td><td class="cell num">${formatNum(safeCogs.expensePurchase)}</td><td class="cell num pct">${totalCogs ? pct(safeCogs.expensePurchase, totalCogs) : '-'}</td></tr>
+      <tr><td class="cell indent-2">จากหน้ากรอกค่าใช้จ่าย (ทุกประเภท)</td><td class="cell num">${formatNum(safeCogs.expensePurchase)}</td><td class="cell num pct">${totalCogs ? pct(safeCogs.expensePurchase, totalCogs) : '-'}</td></tr>
       <tr><td class="cell indent-2">จากหน้าใบกำกับภาษี</td><td class="cell num">${formatNum(safeCogs.taxInvoicePurchase)}</td><td class="cell num pct">${totalCogs ? pct(safeCogs.taxInvoicePurchase, totalCogs) : '-'}</td></tr>
       <tr><td class="cell">ยอดเบิกใช้วัตถุดิบส่วนกลาง</td><td class="cell num">${formatNum(safeCogs.centralBillsTotal)}</td><td class="cell num pct">${totalCogs ? pct(safeCogs.centralBillsTotal, totalCogs) : '-'}</td></tr>
       <tr class="row-total"><td class="cell">หัก: ต้นทุนสินค้าขาย (COGS)</td><td class="cell num">${formatNum(totalCogs)}</td><td class="cell num pct">${pct(totalCogs, baseRevenue)}</td></tr>
@@ -431,7 +432,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
     ${hasCompare ? (() => { const d = diff(netProfit, compareNetProfit); return `<table><thead><tr><th class="cell">รายการ</th><th class="cell num">${monthLabel}</th><th class="cell num">${compareMonthLabel}</th><th class="cell num">ผลต่าง</th><th class="cell num pct">% เปลี่ยน</th></tr></thead><tbody><tr><td class="cell">กำไรสุทธิ</td><td class="${numClass(netProfit)}">${formatNum(netProfit)}</td><td class="${numClass(compareNetProfit)}">${formatNum(compareNetProfit)}</td><td class="cell num${diffClass(d)}">${d >= 0 ? '+' : ''}${formatNum(d)}</td><td class="cell num pct${pctClass(netProfit, compareNetProfit)}">${pctChange(netProfit, compareNetProfit)}</td></tr></tbody></table>`; })() : `<p class="highlight ${netProfit >= 0 ? 'profit' : 'loss'}">${formatNum(netProfit)} <span class="pct">(${pct(netProfit, baseRevenue)})</span></p>`}
   </section>
 
-  <p class="footer-note">เอกสารนี้จัดทำจากระบบ Sales Report · ใช้สำหรับการอ้างอิงภายใน</p>
+  <p class="footer-note">เอกสารนี้จัดทำจากระบบ KebYod App · ใช้สำหรับการอ้างอิงภายใน</p>
 </body>
 </html>`;
 
@@ -602,17 +603,17 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
                   </>
                 ) : (
                   <>
-                    <tr><td className="py-1">1.1 ยอดขายหน้าร้าน</td><td className="text-right font-medium">{formatNum(inStore)}</td></tr>
-                    <tr><td className="pl-4">1.1.1 เงินสด</td><td className="text-right">{formatNum(safeSales.cash)}</td></tr>
-                    <tr><td className="pl-4">1.1.2 โอน</td><td className="text-right">{formatNum(safeSales.transfer)}</td></tr>
-                    <tr><td className="pl-4">1.1.3 เครดิต</td><td className="text-right">{formatNum(safeSales.creditCard)}</td></tr>
-                    <tr><td className="pl-4">1.1.4 คนละครึ่ง</td><td className="text-right">{formatNum(safeSales.halfHalf)}</td></tr>
-                    <tr><td className="py-1">1.2 ยอดขายเดลิเวอรี่</td><td className="text-right font-medium">{formatNum(delivery)}</td></tr>
-                    <tr><td className="pl-4">2.2.1 LINE MAN</td><td className="text-right">{formatNum(safeSales.lineman)}</td></tr>
-                    <tr><td className="pl-4">2.2.2 GRAB</td><td className="text-right">{formatNum(safeSales.grab)}</td></tr>
-                    <tr><td className="pl-4">2.2.3 SHOPEE</td><td className="text-right">{formatNum(safeSales.shopee)}</td></tr>
-                    <tr><td className="pl-4">2.2.4 ROBINHOOD</td><td className="text-right">{formatNum(safeSales.robinhood)}</td></tr>
-                    <tr><td className="pl-4">2.2.5 อื่นๆ</td><td className="text-right">{formatNum(safeSales.other)}</td></tr>
+                    <tr><td className="py-1">ยอดขายหน้าร้าน</td><td className="text-right font-medium">{formatNum(inStore)}</td></tr>
+                    <tr><td className="pl-4">   - เงินสด</td><td className="text-right">{formatNum(safeSales.cash)}</td></tr>
+                    <tr><td className="pl-4">   - โอน</td><td className="text-right">{formatNum(safeSales.transfer)}</td></tr>
+                    <tr><td className="pl-4">   - เครดิต</td><td className="text-right">{formatNum(safeSales.creditCard)}</td></tr>
+                    <tr><td className="pl-4">   - คนละครึ่ง</td><td className="text-right">{formatNum(safeSales.halfHalf)}</td></tr>
+                    <tr><td className="py-1">ยอดขายเดลิเวอรี่</td><td className="text-right font-medium">{formatNum(delivery)}</td></tr>
+                    <tr><td className="pl-4">   - LINE MAN</td><td className="text-right">{formatNum(safeSales.lineman)}</td></tr>
+                    <tr><td className="pl-4">   - GRAB</td><td className="text-right">{formatNum(safeSales.grab)}</td></tr>
+                    <tr><td className="pl-4">   - SHOPEE</td><td className="text-right">{formatNum(safeSales.shopee)}</td></tr>
+                    <tr><td className="pl-4">   - ROBINHOOD</td><td className="text-right">{formatNum(safeSales.robinhood)}</td></tr>
+                    <tr><td className="pl-4">   - อื่นๆ</td><td className="text-right">{formatNum(safeSales.other)}</td></tr>
                     <tr className="border-t font-bold"><td className="py-2">1. ยอดขายรวม</td><td className="text-right">{formatNum(totalSales)}</td></tr>
                     <tr><td>2. หัก ภาษีมูลค่าเพิ่ม 7% (VAT)</td><td className="text-right">{formatNum(vatAmount)}</td></tr>
                     <tr className="border-t font-bold"><td className="py-2">3. ยอดขายหลังหัก VAT</td><td className="text-right">{formatNum(salesAfterVat)}</td></tr>
@@ -632,7 +633,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
             <table className="w-full text-sm mb-4">
               <tbody>
                 <tr><td>ยอดสั่งซื้อวัตถุดิบอื่นๆ (ค่าใช้จ่าย+ใบกำกับ)</td><td className="text-right">{formatNum((safeCogs.expensePurchase || 0) + (safeCogs.taxInvoicePurchase || 0))}</td></tr>
-                <tr><td className="pl-4">- จากหน้ากรอกค่าใช้จ่าย (ซื้อของนอก)</td><td className="text-right">{formatNum(safeCogs.expensePurchase)}</td></tr>
+                <tr><td className="pl-4">- จากหน้ากรอกค่าใช้จ่าย (ทุกประเภท)</td><td className="text-right">{formatNum(safeCogs.expensePurchase)}</td></tr>
                 <tr><td className="pl-4">- จากหน้าใบกำกับภาษี</td><td className="text-right">{formatNum(safeCogs.taxInvoicePurchase)}</td></tr>
                 <tr><td>ยอดเบิกใช้วัตถุดิบส่วนกลาง</td><td className="text-right">{formatNum(safeCogs.centralBillsTotal)}</td></tr>
                 <tr className="border-t font-bold"><td className="py-2">หัก: ต้นทุนสินค้าขาย (COGS)</td><td className="text-right">{formatNum(totalCogs)}</td></tr>
@@ -642,7 +643,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
               <p className="font-bold text-gray-700 mb-2">เพิ่มบิล/ใบเสร็จจากส่วนกลาง</p>
               <form onSubmit={handleAddCentralBill} className="flex flex-wrap gap-2 items-end">
                 <input type="text" placeholder="เลขที่บิล" value={centralBillForm.billNo} onChange={(e) => setCentralBillForm(f => ({ ...f, billNo: e.target.value }))} className="border rounded px-2 py-1 w-32" />
-                <input type="date" value={centralBillForm.billDate} onChange={(e) => setCentralBillForm(f => ({ ...f, billDate: e.target.value }))} className="border rounded px-2 py-1" />
+                <DateInput value={centralBillForm.billDate} onChange={(v) => setCentralBillForm(f => ({ ...f, billDate: v }))} className="min-w-[140px]" name="centralBillDate" />
                 <input type="number" step="0.01" placeholder="ยอดซื้อ" value={centralBillForm.amount} onChange={(e) => setCentralBillForm(f => ({ ...f, amount: e.target.value }))} className="border rounded px-2 py-1 w-28" />
                 <button type="submit" className="bg-indigo-600 text-white px-3 py-1 rounded text-sm">เพิ่ม</button>
               </form>

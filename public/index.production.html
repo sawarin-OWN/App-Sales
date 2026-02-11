@@ -8,24 +8,24 @@
   <!-- ============================================ -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
   
-  <title>Sales Dashboard - POS System</title>
-  <meta name="description" content="RS Project Sales Report - ระบบรายงานยอดขาย">
+  <title>KebYod App</title>
+  <meta name="description" content="KebYod App - ระบบรายงานยอดขาย">
 
   <!-- iOS Safari PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Sales Report">
+  <meta name="apple-mobile-web-app-title" content="KebYod App">
   <meta name="apple-touch-fullscreen" content="yes">
   
   <!-- Android / Chrome PWA -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#10b981">
+  <meta name="theme-color" content="#f0fdf4">
   <meta name="format-detection" content="telephone=no">
 
   <!-- Manifest & Icons -->
   <link rel="manifest" href="/manifest.json?v=5">
-  <link rel="icon" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png">
+  <link rel="icon" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(7).png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(7).png">
 
   <!-- ============================================ -->
   <!-- 🎨 STYLES & FONTS -->
@@ -61,11 +61,12 @@
       overflow: hidden !important;
       overscroll-behavior-y: none !important;
       overscroll-behavior: none !important;
-      background-color: #f9fafb;
+      background: linear-gradient(180deg, #86efac 0%, #dcfce7 40%, #f0fdf4 70%, #ffffff 100%);
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
     
+    /* #root ไม่ scroll — ให้ main เป็น scroll container เพื่อแถบเมนูไม่ซ้อนเนื้อหาบนมือถือ */
     #root {
       position: fixed !important;
       top: 0 !important;
@@ -77,11 +78,13 @@
       height: 100dvh !important;
       max-height: 100vh !important;
       max-height: 100dvh !important;
-      overflow-y: auto !important;
+      overflow-y: hidden !important;
       overflow-x: hidden !important;
-      -webkit-overflow-scrolling: touch !important;
+      display: flex !important;
+      flex-direction: column !important;
       margin: 0 !important;
       padding: 0 !important;
+      background-color: #f0fdf4 !important;
     }
     
     /* ป้องกันการเลื่อนเมื่อ focus input */
@@ -105,15 +108,21 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* Header Safe Area Support - ป้องกันทับ Status Bar */
+    /* Header Safe Area Support - พื้นหลังทึบไม่ให้เนื้อหาเลื่อนทับบนมือถือ */
     header {
       top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
       padding-top: 8px !important;
       left: 0 !important;
       right: 0 !important;
       position: fixed !important;
-      z-index: 40 !important;
+      z-index: 50 !important;
+      background-color: #ffffff !important;
+      background-image: none !important;
+      opacity: 1 !important;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
     }
+    header > div:last-of-type { background-color: #12467d !important; background-image: none !important; }
 
     /* Main content spacing for fixed header */
     main {
@@ -156,8 +165,8 @@
       right: 0;
       bottom: 0;
       z-index: 99999;
-      /* โทนสีเข้ากับโลโก้: teal/blue-green */
-      background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #115e59 100%);
+      /* พื้นหลังหน้าโหลดดิ้ง: เขียวไล่เฉดไปขาว */
+      background: linear-gradient(180deg, #86efac 0%, #bbf7d0 25%, #dcfce7 50%, #f0fdf4 75%, #ffffff 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -361,17 +370,16 @@
       // Hide address bar
       const hideAddressBar = () => {
         const currentScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
-        window.scrollTo(0, currentScroll + 1);
-        setTimeout(() => window.scrollTo(0, currentScroll), 10);
+        if (currentScroll > 0) {
+          window.scrollTo(0, currentScroll + 1);
+          setTimeout(() => window.scrollTo(0, currentScroll), 10);
+        }
       };
       
       setTimeout(hideAddressBar, 0);
       setTimeout(hideAddressBar, 100);
-      setTimeout(hideAddressBar, 300);
-      setTimeout(hideAddressBar, 500);
       
       window.addEventListener('scroll', hideAddressBar, { passive: true });
-      window.addEventListener('touchstart', hideAddressBar, { passive: true });
       
       // Update viewport height on resize
       window.addEventListener('resize', () => {
@@ -414,33 +422,33 @@
       <div class="absolute inset-0 bg-white rounded-full opacity-20 animate-ping"></div>
       <div class="absolute -inset-1 bg-white rounded-full opacity-40 animate-pulse"></div>
       <img 
-        src="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(1).png" 
+        src="https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(7).png" 
         alt="App Logo" 
-        class="relative w-44 h-44 rounded-full shadow-2xl object-cover border-[10px] border-white z-10"
+        class="relative w-24 h-24 rounded-full shadow-2xl object-cover border-4 border-white z-10"
         onerror="this.src='https://placehold.co/150x150/10b981/ffffff?text=POS'"
       >
     </div>
 
-    <!-- App Name -->
+    <!-- App Name - สีให้เข้ากับโลโก้ (น้ำเงิน + เขียว) -->
     <div class="text-center mb-8 animate-fade-in-up">
-      <h1 class="text-3xl font-bold text-white tracking-wide mb-2 drop-shadow-lg">
-        Sales Dashboard
+      <h1 class="text-3xl font-bold tracking-wide mb-2 drop-shadow-sm" style="color: #12467d;">
+        <span style="color: #12467d;">Keb</span><span style="color: #4CAF50;">Yod</span> App
       </h1>
-      <p class="text-white/90 text-base font-medium">ระบบรายงานยอดขาย</p>
+      <p class="text-base font-medium" style="color: #12467d;">ระบบรายงานยอดขาย</p>
     </div>
 
-    <!-- Loading Dots -->
+    <!-- Loading Dots - สีน้ำเงินเข้ากับโลโก้ -->
     <div class="flex items-center space-x-3 mb-6">
-      <div class="w-4 h-4 bg-white rounded-full animate-bounce-delay-1 shadow-lg"></div>
-      <div class="w-4 h-4 bg-white rounded-full animate-bounce-delay-2 shadow-lg"></div>
-      <div class="w-4 h-4 bg-white rounded-full animate-bounce-delay-3 shadow-lg"></div>
+      <div class="w-4 h-4 rounded-full animate-bounce-delay-1 shadow-md" style="background-color: #12467d;"></div>
+      <div class="w-4 h-4 rounded-full animate-bounce-delay-2 shadow-md" style="background-color: #12467d;"></div>
+      <div class="w-4 h-4 rounded-full animate-bounce-delay-3 shadow-md" style="background-color: #12467d;"></div>
     </div>
 
     <!-- Status Text -->
-    <p class="text-white/80 text-sm font-medium animate-pulse">กำลังโหลดแอปพลิเคชัน...</p>
+    <p class="text-sm font-medium animate-pulse" style="color: #12467d;">กำลังโหลดแอปพลิเคชัน...</p>
     
     <!-- Version -->
-    <p class="absolute bottom-8 text-white/60 text-xs font-light tracking-widest">VERSION 1.0.7</p>
+    <p class="absolute bottom-8 text-xs font-light tracking-widest" style="color: #12467d; opacity: 0.85;">VERSION 1.0.7</p>
   </div>
   
   <!-- ============================================ -->
@@ -452,18 +460,26 @@
   <!-- 🎬 SPLASH SCREEN HIDE LOGIC -->
   <!-- ============================================ -->
   <script>
-    // Hide splash screen when React app loads
+    function pinScrollToTop() {
+      window.scrollTo(0, 0);
+      var root = document.getElementById('root');
+      if (root) root.scrollTop = 0;
+    }
     window.addEventListener('load', function() {
       setTimeout(function() {
         const splash = document.getElementById('splash-screen');
         if (splash) {
           splash.classList.add('hidden');
-          setTimeout(() => splash.remove(), 500);
+          setTimeout(function() {
+            splash.remove();
+            pinScrollToTop();
+          }, 500);
+        } else {
+          pinScrollToTop();
         }
       }, 1500);
     });
 
-    // Fallback: Hide when root has content
     const observer = new MutationObserver(function(mutations) {
       const root = document.getElementById('root');
       if (root && root.children.length > 0) {
@@ -471,10 +487,15 @@
           const splash = document.getElementById('splash-screen');
           if (splash && !splash.classList.contains('hidden')) {
             splash.classList.add('hidden');
-            setTimeout(() => splash.remove(), 500);
+            setTimeout(function() {
+              splash.remove();
+              pinScrollToTop();
+            }, 500);
+          } else {
+            pinScrollToTop();
           }
+          observer.disconnect();
         }, 800);
-        observer.disconnect();
       }
     });
     

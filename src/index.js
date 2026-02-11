@@ -88,26 +88,26 @@ function hideAddressBar() {
   const isStandalone = isStandaloneMode();
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
-  // Only try to hide address bar if not in standalone mode
+  // Only try to hide address bar if not in standalone mode (ไม่ใช้ scroll trick ตอนอยู่บนสุด เพื่อป้องกันหน้าจอเลื่อนลงเองบนมือถือ)
   if (isMobile && !isStandalone) {
     const hideBar = () => {
       const currentScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
-      window.scrollTo(0, currentScroll + 1);
-      setTimeout(() => {
-        window.scrollTo(0, currentScroll);
+      if (currentScroll > 0) {
+        window.scrollTo(0, currentScroll + 1);
+        setTimeout(() => {
+          window.scrollTo(0, currentScroll);
+          setViewportHeight();
+        }, 10);
+      } else {
         setViewportHeight();
-      }, 10);
+      }
     };
     
-    // Try multiple times
     hideBar();
     setTimeout(hideBar, 100);
-    setTimeout(hideBar, 300);
     setTimeout(hideBar, 500);
     
-    // Hide on scroll
     window.addEventListener('scroll', hideBar, { passive: true });
-    window.addEventListener('touchstart', hideBar, { passive: true });
   }
 }
 

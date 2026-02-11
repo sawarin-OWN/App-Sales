@@ -4,6 +4,72 @@
 
 ---
 
+## สรุปขั้นตอน Deploy แบบเร็ว (Quick Steps)
+
+| ลำดับ | ทำอะไร | หมายเหตุ |
+|-------|--------|----------|
+| 1 | **Push โค้ดขึ้น GitHub** (ถ้าใช้ Deploy ผ่าน Dashboard) | Repo ใดก็ได้ เช่น `main` |
+| 2 | **เตรียม Supabase** | จาก Supabase → Settings → API คัดลอก **Project URL** และ **anon public** key |
+| 3 | **ไปที่ [vercel.com](https://vercel.com)** → Add New → Project → เลือก Repo | หรือใช้ CLI: `npx vercel` |
+| 4 | **ตั้งค่า Build:** Framework = Create React App, Build = `npm run build`, Output = `build` | มักเดาได้อัตโนมัติ |
+| 5 | **ใส่ Environment Variables** ก่อนกด Deploy: `REACT_APP_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY` | ติ๊ก Production + Preview |
+| 6 | **กด Deploy** | รอ 1–3 นาที จะได้ URL เช่น `https://xxx.vercel.app` |
+| 7 | **ทดสอบ:** เปิด URL, ลอง Login, ลอง Refresh หน้าที่ path ย่อย (เช่น `/dashboard`) | ถ้า 404 ดูหัวข้อ "แก้ปัญหา: Refresh แล้ว 404" — โปรเจกต์นี้มี `vercel.json` แล้ว |
+
+**ตรวจในเครื่องก่อน Deploy:** รัน `npm run build` ให้ผ่าน (โปรเจกต์นี้ build ผ่านแล้ว)
+
+---
+
+## ปลายทาง (Project) ที่ Deploy ไป — ต้องเป็น repo นี้
+
+โปรเจกต์นี้ต้อง deploy ไปที่ Vercel Project ที่เชื่อมกับ **https://github.com/saocafe31-pixel/sales-report** เท่านั้น (เช่น sales-report-taupe.vercel.app) ไม่ให้ deploy ไปที่โปรเจกต์อื่น (เช่น sale-s-report-clone / sawarin-owns-projects) — ดูขั้นตอนลิงก์ที่ถูกต้องในหัวข้อ "วิธีกำหนดปลายทาง" ด้านล่าง
+
+| รายการ | สถานะในโปรเจกต์นี้ |
+|--------|---------------------|
+| **กำหนดไว้ใน repo หรือไม่** | **ไม่มี** — โปรเจกต์นี้ไม่ได้เก็บชื่อ/ID ของ Vercel Project ไว้ในโค้ด |
+| **โฟลเดอร์ `.vercel/`** | ไม่มีในโปรเจกต์ (และอยู่ใน `.gitignore` จึงไม่ถูก commit) |
+| **ไฟล์ `vercel.json`** | **มีแล้ว** — ใช้สำหรับ SPA rewrites (ป้องกัน Refresh แล้ว 404) |
+
+**สรุป:** ตอนนี้ **ไม่มี “ปลายทาง” ตายตัวในโปรเจกต์**  
+- **Deploy ผ่าน Vercel Dashboard (Import จาก GitHub):** ปลายทางคือ Project ที่คุณสร้าง/เลือกตอน Import Repo นั้นบน [vercel.com](https://vercel.com)  
+- **Deploy ผ่าน Vercel CLI (`vercel` / `vercel --prod`):** ปลายทางจะถูกกำหนดตอนรันคำสั่ง (ถามให้เลือก Team + Project หรือสร้างใหม่) และเก็บในโฟลเดอร์ `.vercel/project.json` ในเครื่องคุณเท่านั้น (ไม่ส่งขึ้น Git)
+
+### วิธีตรวจสอบว่าโฟลเดอร์นี้ deploy ไปที่ Project ไหน (เมื่อใช้ CLI)
+
+1. รันในโฟลเดอร์โปรเจกต์:
+   ```bash
+   npx vercel project ls
+   ```
+   จะแสดงรายการ Project ในบัญชี/ทีมที่ login อยู่
+
+2. ถ้ามีการ link ไว้แล้ว (มีโฟลเดอร์ `.vercel` ในเครื่อง) ดูได้จาก:
+   - เปิดไฟล์ `.vercel/project.json` (ถ้ามี) จะมี `projectId`, `orgId`, `projectName`  
+   - หรือรัน `npx vercel inspect <url>` โดยใส่ URL deployment จริง เช่น `npx vercel inspect sales-report-taupe.vercel.app`
+
+3. ถ้ายังไม่เคย link หรือลบ `.vercel` ไปแล้ว การรัน `vercel` ครั้งถัดไปจะถามให้เลือก/สร้าง Project ใหม่
+
+### วิธีกำหนดปลายทาง (Link กับ Project ที่เชื่อมกับ repo นี้)
+
+โปรเจกต์นี้ต้อง deploy ไปที่ **https://github.com/saocafe31-pixel/sales-report** (โดเมนเช่น sales-report-taupe.vercel.app) ไม่ใช่โปรเจกต์อื่น (เช่น sale-s-report-clone / sawarin-owns-projects)
+
+**ทำไมรัน `vercel link` แล้วเห็น Scope "sawarin-own's projects"?**  
+เพราะ Vercel CLI แสดง **ทุก Scope (ทีม/บัญชี) ที่คุณ login อยู่** — ถ้าคุณเคยใช้บัญชีนี้กับไฟล์ต้นทางที่ clone มา ก็จะโผล่ในรายการ ต้องเลือก Scope ที่เป็นเจ้าของโปรเจกต์ที่เชื่อมกับ repo นี้ หรือถ้ามีแค่ Scope เดียว ให้เลือกแล้วไปเลือก **ชื่อโปรเจกต์** ให้ถูก (sales-report ไม่ใช่ sale-s-report-clone)
+
+1. **ลบการ link เก่า** (ถ้าเคย deploy ไปผิดโปรเจกต์): ลบโฟลเดอร์ `.vercel` ในโปรเจกต์ หรือรัน `Remove-Item -Path ".vercel" -Recurse -Force`
+2. รัน:
+   ```bash
+   npx vercel link
+   ```
+3. **Which scope?** → ใช้ลูกศรขึ้นลงดูรายการ **ทุก Scope** ที่โผล่มา  
+   - ถ้ามี Scope อื่นนอกจาก "sawarin-own's projects" (เช่น บัญชีที่ใช้ Import repo saocafe31-pixel/sales-report) ให้เลือก **Scope นั้น**  
+   - ถ้ามีแค่ "sawarin-own's projects" ให้เลือก Scope นี้ได้ แล้วไปขั้นถัดไปให้เลือก **ชื่อโปรเจกต์** ให้ถูก (ต้องเป็น sales-report ที่โดเมน sales-report-taupe.vercel.app ไม่ใช่ sale-s-report-clone)
+4. **Link to existing project?** → **Y**
+5. **What's the name of your existing project?** → เลือก **sales-report** (โดเมน sales-report-taupe.vercel.app) **ไม่ใช่** sale-s-report-clone
+
+จากนั้นรัน `vercel --prod` จะ deploy ไปที่ Project ที่เชื่อมกับ repo นี้
+
+---
+
 ## สิ่งที่ต้องเตรียมก่อน Deploy
 
 | รายการ | หมายเหตุ |

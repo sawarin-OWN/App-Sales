@@ -36,7 +36,7 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
   
   const [formData, setFormData] = useState({
     date: getToday(),
-    amount: 0,
+    amount: '',
     expenseType: 'CASH_DRAWER',
     reason: '',
     notes: '',
@@ -107,7 +107,7 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'amount' ? parseFloat(value) || 0 : value
+      [name]: name === 'amount' ? (value === '' ? '' : value) : value
     }));
   };
 
@@ -283,7 +283,7 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
   // เมื่อโฟกัสที่ช่องตัวเลข ถ้าเป็น 0 ให้เลือกทั้งหมดเพื่อให้ผู้ใช้พิมพ์ทับได้เลย
   const handleNumberFocus = (e) => {
     const v = e.target.value;
-    if (v === '0' || v === '0.00' || v === '0.0') e.target.select();
+    if (v === '0' || v === '0.00' || v === '0.0' || v === '') e.target.select();
   };
 
   const removeImage = () => {
@@ -298,12 +298,23 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    const hasReceiptImage = !!(formData.receiptImageUrl || formData.receiptImageBase64 || formData.receiptImage);
+
     if (!formData.date || !formData.amount || !formData.reason) {
       Swal.fire({
         icon: 'warning',
         title: 'กรุณากรอกข้อมูลให้ครบ',
         text: 'ต้องกรอกวันที่, จำนวนเงิน, และรายการ'
+      });
+      return;
+    }
+
+    if (!hasReceiptImage) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'กรุณาแนบรูปภาพหลักฐาน',
+        text: 'ต้องแนบรูปภาพหลักฐานก่อนจึงจะบันทึกค่าใช้จ่ายได้'
       });
       return;
     }
@@ -317,7 +328,7 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
     // สร้าง data object โดยไม่รวม receiptImage (File object)
     const data = {
       date: normalizeDate(formData.date), // Normalize date before sending
-      amount: formData.amount,
+      amount: parseFloat(formData.amount) || 0,
       expenseType: formData.expenseType,
       reason: formData.reason,
       notes: formData.notes || '',
@@ -347,7 +358,7 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
         });
         setFormData({
           date: today,
-          amount: 0,
+          amount: '',
           expenseType: 'CASH_DRAWER',
           reason: '',
           notes: '',
@@ -469,7 +480,6 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
           >
             <option value="CASH_DRAWER">เบิกเงินลิ้นชัก</option>
             <option value="EXTERNAL">ซื้อของนอก</option>
-            <option value="UTILITY">ค่าไฟ/น้ำ/โทรศัพท์</option>
             <option value="SUPPLY">วัสดุสิ้นเปลือง</option>
             <option value="OTHER">อื่นๆ</option>
           </select>
@@ -502,12 +512,13 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
           />
         </div>
 
-        {/* Receipt/Image Upload */}
+        {/* Receipt/Image Upload - บังคับต้องแนบรูปก่อนบันทึก */}
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">
             <i className="fas fa-image mr-2 text-red-600"></i>
-            รูปภาพหลักฐาน (ถ้ามี)
+            รูปภาพหลักฐาน <span className="text-red-500">*</span>
           </label>
+          <p className="text-xs text-gray-600 mb-2">ต้องแนบรูปภาพหลักฐานถึงจะบันทึกค่าใช้จ่ายได้</p>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-red-400 transition">
             <input
               type="file"
@@ -551,11 +562,17 @@ function Expenses({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
         
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-4 rounded-lg shadow-lg hover:from-red-700 hover:to-red-800 transition active:scale-95 text-lg"
+          disabled={!(formData.receiptImageUrl || formData.receiptImageBase64 || formData.receiptImage)}
+          className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-4 rounded-lg shadow-lg hover:from-red-700 hover:to-red-800 transition active:scale-95 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-red-600 disabled:hover:to-red-700"
         >
           <i className="fas fa-save mr-2"></i>
           บันทึกค่าใช้จ่าย
         </button>
+        {!(formData.receiptImageUrl || formData.receiptImageBase64 || formData.receiptImage) && (
+          <p className="text-center text-sm text-amber-600 mt-1">
+            <i className="fas fa-info-circle mr-1"></i>กรุณาแนบรูปภาพหลักฐานก่อนกดบันทึก
+          </p>
+        )}
       </form>
       
       {/* Expense History */}

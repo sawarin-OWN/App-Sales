@@ -1,4 +1,4 @@
-# Sales Dashboard - React + Supabase
+# KebYod App - React + Supabase
 
 ระบบบันทึกและรายงานยอดขาย พัฒนาด้วย React, Tailwind CSS และ Supabase
 

@@ -1,7 +1,7 @@
 {
   "name": "sales-dashboard",
   "version": "1.0.0",
-  "description": "Sales Dashboard - React + Google Apps Script",
+  "description": "KebYod App - React + Supabase",
   "private": true,
   "scripts": {
     "start": "react-scripts start",

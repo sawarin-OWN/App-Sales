@@ -82,11 +82,10 @@ function Sales({ overrideBranchCode, overrideBranchName, allowAdminDelete }) {
   useEffect(() => {
     calculateTotals();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData, calculations.cashExpenses]);
+  }, [formData, expenses]);
 
   useEffect(() => {
     if (effectiveBranchCode && formData.date) {
-      fetchCashExpenses();
       checkExistingSales();
       loadExpensesForDate();
     }
@@ -319,20 +318,6 @@ function Sales({ overrideBranchCode, overrideBranchName, allowAdminDelete }) {
     }
   };
 
-  const fetchCashExpenses = async () => {
-    if (!effectiveBranchCode || !formData.date) return;
-    
-    try {
-      console.log('[Sales] Fetching cash expenses for date:', formData.date, 'branchCode:', effectiveBranchCode);
-      const result = await gasAPI.getCashExpensesForDate(effectiveBranchCode, formData.date);
-      console.log('[Sales] getCashExpensesForDate result:', result);
-      setCalculations(prev => ({ ...prev, cashExpenses: result || 0 }));
-    } catch (error) {
-      console.error('[Sales] Error fetching cash expenses:', error);
-      setCalculations(prev => ({ ...prev, cashExpenses: 0 }));
-    }
-  };
-
   const calculateTotals = () => {
     const cash = parseFloat(formData.cash) || 0;
     const transfer = parseFloat(formData.transfer) || 0;
@@ -345,18 +330,26 @@ function Sales({ overrideBranchCode, overrideBranchName, allowAdminDelete }) {
     const other = parseFloat(formData.other) || 0;
     const startingCash = parseFloat(formData.startingCash) || 0;
     const cashCounted = parseFloat(formData.cashCounted) || 0;
-    
+
     const totalSales = cash + transfer + grab + lineman + shopee + robinhood + creditCard + halfHalf + other;
-    
-    const cashBalance = (startingCash + cash) - calculations.cashExpenses;
+
+    // รวมค่าใช้จ่ายทั้งหมด (ทุกประเภท) สำหรับแสดงใน UI
+    const cashExpensesTotal = expenses.reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+    // เฉพาะประเภท "เบิกเงินลิ้นชัก" สำหรับคำนวณเงินสดคงเหลือ / เงินสดขาด-เกิน / ยอดที่ต้องนำฝาก
+    const cashExpensesDrawerOnly = expenses
+      .filter((e) => (e.expenseType || e.Type || '') === 'CASH_DRAWER')
+      .reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+
+    const cashBalance = (startingCash + cash) - cashExpensesDrawerOnly;
     const cashDifference = cashCounted - cashBalance;
-    const depositAmount = cashCounted - startingCash;
-    
+    const depositAmount = cash - cashExpensesDrawerOnly;
+
     setCalculations({
       ...calculations,
       totalSales,
       cashBalance,
       cashDifference,
+      cashExpenses: cashExpensesTotal,
       depositAmount: Math.max(0, depositAmount)
     });
   };
@@ -946,7 +939,7 @@ function Sales({ overrideBranchCode, overrideBranchName, allowAdminDelete }) {
           <div className="mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-lg">
             <div className="mb-3">
               <p className="text-xs opacity-90 mb-1">เงินสดคงเหลือ (ตามทฤษฎี)</p>
-              <p className="text-xs opacity-75">(เงินสดตั้งต้น + ยอดขายเงินสด) - ค่าใช้จ่ายเงินสด</p>
+              <p className="text-xs opacity-75">(เงินสดตั้งต้น + ยอดขายเงินสด) - ค่าใช้จ่ายเฉพาะประเภทเบิกเงินลิ้นชัก</p>
               <h3 className="text-2xl font-bold mt-2">{formatNumber(calculations.cashBalance)}</h3>
             </div>
             <div className="border-t border-white/20 pt-3">
@@ -970,7 +963,7 @@ function Sales({ overrideBranchCode, overrideBranchName, allowAdminDelete }) {
               <span className="text-2xl font-bold">{formatNumber(calculations.depositAmount)}</span>
             </div>
             <div className="text-xs opacity-75 mt-2">
-              คำนวณจาก: เงินสด - ค่าใช้จ่าย - เงินตั้งต้น
+              คำนวณจาก: ยอดขายเงินสด - ค่าใช้จ่ายเฉพาะประเภทเบิกเงินลิ้นชัก - เงินตั้งต้น
             </div>
           </div>
         </div>

@@ -37,7 +37,7 @@ function Deposits({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
   
   const [formData, setFormData] = useState({
     date: getToday(),
-    amount: 0,
+    amount: '',
     notes: '',
     slipBase64Compressed: '',
     slipImageUrl: ''
@@ -135,7 +135,7 @@ function Deposits({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'amount' ? parseFloat(value) || 0 : value
+      [name]: name === 'amount' ? (value === '' ? '' : value) : value
     }));
   };
 
@@ -299,7 +299,7 @@ function Deposits({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
   // เมื่อโฟกัสที่ช่องตัวเลข ถ้าเป็น 0 ให้เลือกทั้งหมดเพื่อให้ผู้ใช้พิมพ์ทับได้เลย
   const handleNumberFocus = (e) => {
     const v = e.target.value;
-    if (v === '0' || v === '0.00' || v === '0.0') e.target.select();
+    if (v === '0' || v === '0.00' || v === '0.0' || v === '') e.target.select();
   };
 
   const handleSubmit = async (e) => {
@@ -350,7 +350,7 @@ function Deposits({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
     // สร้าง data object โดยไม่รวม slipFile (File object)
     const data = {
       date: normalizeDate(formData.date), // Normalize date before sending
-      amount: formData.amount,
+      amount: parseFloat(formData.amount) || 0,
       notes: formData.notes || '',
       slipBase64: base64ToSend || '', // ส่ง Base64 ไปให้ GAS บันทึกลง Drive
       slipImageUrl: formData.slipImageUrl || '', // เก็บ URL (ถ้ามี)
@@ -378,7 +378,7 @@ function Deposits({ overrideBranchCode, overrideBranchName, allowAdminDelete }) 
           });
           setFormData({
             date: today,
-            amount: 0,
+            amount: '',
             notes: '',
             slipBase64Compressed: '',
             slipImageUrl: ''

@@ -24,9 +24,9 @@
 2. คลิก **File** > **Make a copy** (สร้างสำเนา)
 
 3. ตั้งชื่อใหม่ เช่น:
-   - `Sales Report - Development`
-   - `Sales Report - Branch 2`
-   - `Sales Report - Testing`
+   - `KebYod App - Development`
+   - `KebYod App - Branch 2`
+   - `KebYod App - Testing`
 
 4. เลือกโฟลเดอร์ที่ต้องการ (หรือปล่อยไว้ที่ My Drive)
 
@@ -59,8 +59,8 @@
 2. คลิก **New project** (โปรเจคใหม่)
 
 3. ตั้งชื่อโปรเจค เช่น:
-   - `Sales Report Backend - Development`
-   - `Sales Report Backend - Branch 2`
+   - `KebYod App Backend - Development`
+   - `KebYod App Backend - Branch 2`
 
 #### 2.2 Copy Code จาก Production
 
@@ -101,7 +101,7 @@
 3. เลือก Type: **Web app**
 
 4. ตั้งค่าดังนี้:
-   - **Description**: `Sales Dashboard API - Development` (หรือชื่อที่ต้องการ)
+   - **Description**: `KebYod App API - Development` (หรือชื่อที่ต้องการ)
    - **Execute as**: **Me** (หรือ User deploying the web app)
    - **Who has access**: **Anyone** ⚠️ **สำคัญมาก!**
 
@@ -290,8 +290,8 @@ vercel --prod
 
 ### 3. ตั้งชื่อให้ชัดเจน
 
-- Google Sheets: `Sales Report - Development`
-- Google Apps Script: `Sales Report Backend - Development`
+- Google Sheets: `KebYod App - Development`
+- Google Apps Script: `KebYod App Backend - Development`
 - Vercel Project: `sales-report-dev`
 
 ### 4. ใช้ Git Branches

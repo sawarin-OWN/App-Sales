@@ -218,6 +218,27 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
     return parseFloat(num || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  // ขนาดตัวเลขในการ์ด: ใช้ขนาดเดียวกันทุกการ์ด แสดงเต็มไม่ซ่อน เล็กลงเมื่อตัวเลขยาวเพื่อให้พอดีการ์ด
+  const cardNumClassFromLen = (len) => {
+    if (len <= 6) return 'text-xl md:text-2xl';
+    if (len <= 9) return 'text-base md:text-lg';
+    if (len <= 12) return 'text-sm md:text-base';
+    if (len <= 15) return 'text-xs md:text-sm';
+    return 'text-xs';
+  };
+  const cardValues = [
+    formatNumber(data.totalSales),
+    formatNumber(data.pnlGrossProfit),
+    formatNumber(data.totalExpenses),
+    formatNumber(data.totalRecords),
+    formatNumber(data.pnlCost),
+    formatNumber(data.pnlOpex),
+    formatNumber(data.depositsInRange),
+    formatNumber(data.pnlNetProfit)
+  ];
+  const maxCardLen = Math.max(0, ...cardValues.map(s => (s || '').length));
+  const cardNumClassAll = cardNumClassFromLen(maxCardLen);
+
   const formatDate = (dateStr) => (dateStr ? formatDateForDisplay(dateStr) : '-');
 
   // Memoize chart data and options to prevent re-renders
@@ -226,8 +247,8 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
     datasets: [{
       label: 'ยอดขาย',
       data: data.charts?.line?.sales || [],
-      borderColor: '#3b82f6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: '#1a4781',
+      backgroundColor: 'rgba(26, 71, 129, 0.12)',
       tension: 0.4,
       fill: true,
       pointRadius: 4,
@@ -238,22 +259,19 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
   const lineChartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
+    layout: { padding: { top: 4, right: 8, bottom: 4, left: 4 } },
     interaction: {
       mode: 'index',
       intersect: false
     },
     plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false
-      }
+      legend: { display: false },
+      tooltip: { mode: 'index', intersect: false }
     },
     scales: {
       x: {
-        display: true
+        display: true,
+        ticks: { maxRotation: 45, minRotation: 0, maxTicksLimit: 8 }
       },
       y: {
         display: true,
@@ -266,7 +284,7 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
     labels: data.charts?.pie?.labels || [],
     datasets: [{
       data: data.charts?.pie?.data || [],
-      backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'],
+      backgroundColor: ['#1a4781', '#4CAF50', '#f59e0b', '#ef4444', '#234b75', '#66BB6A', '#06b6d4', '#84cc16', '#f97316'],
       borderWidth: 2,
       borderColor: '#ffffff'
     }]
@@ -275,12 +293,15 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
   const pieChartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
+    layout: { padding: { top: 8, right: 8, bottom: 8, left: 8 } },
     plugins: {
       legend: {
         position: 'bottom',
         labels: {
-          padding: 15,
-          usePointStyle: true
+          padding: 10,
+          usePointStyle: true,
+          boxWidth: 12,
+          font: { size: 11 }
         }
       },
       tooltip: {
@@ -301,52 +322,52 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
     <div className="space-y-6">
       {/* Dashboard Cards */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-5 rounded-xl shadow-lg">
-          <div className="flex justify-between items-start">
-            <div>
+        <div className="text-white p-5 rounded-xl shadow-lg" style={{ background: 'linear-gradient(135deg, #1a4781, #234b75)' }}>
+          <div className="flex justify-between items-start gap-2 min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-xs opacity-90 uppercase tracking-wide mb-1">ยอดขายรวม</p>
-              <h2 className="text-2xl md:text-3xl font-bold">{formatNumber(data.totalSales)}</h2>
+              <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll}`}>{formatNumber(data.totalSales)}</h2>
             </div>
-            <i className="fas fa-wallet text-3xl opacity-20"></i>
+            <i className="fas fa-wallet text-3xl opacity-20 flex-shrink-0"></i>
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
+        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">กำไรขั้นต้น</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-green-600">{formatNumber(data.pnlGrossProfit)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll}`} style={{ color: '#4CAF50' }}>{formatNumber(data.pnlGrossProfit)}</h2>
         </div>
         
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-red-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-red-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase mb-1">ค่าใช้จ่าย</p>
-          <h2 className="text-xl font-bold text-red-600">{formatNumber(data.totalExpenses)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll}`}>{formatNumber(data.totalExpenses)}</h2>
         </div>
         
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-orange-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-orange-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase mb-1">จำนวนรายการ</p>
-          <h2 className="text-xl font-bold text-orange-600">{formatNumber(data.totalRecords)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll}`}>{formatNumber(data.totalRecords)}</h2>
         </div>
       </section>
 
       {/* การ์ดจากงบกำไรขาดทุน + ยอดนำฝากตามช่วง */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-amber-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-amber-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">ต้นทุน (จากงบ P&L)</p>
-          <h2 className="text-xl font-bold text-amber-700">{formatNumber(data.pnlCost)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-amber-700 ${cardNumClassAll}`}>{formatNumber(data.pnlCost)}</h2>
           <p className="text-xs text-gray-400 mt-1">จากงบกำไรขาดทุนที่บันทึกแล้ว</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-rose-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-rose-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">ค่าใช้จ่ายดำเนินการ (จากงบ P&L)</p>
-          <h2 className="text-xl font-bold text-rose-700">{formatNumber(data.pnlOpex)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-rose-700 ${cardNumClassAll}`}>{formatNumber(data.pnlOpex)}</h2>
           <p className="text-xs text-gray-400 mt-1">จากงบกำไรขาดทุนที่บันทึกแล้ว</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-emerald-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-emerald-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">ยอดนำฝากรวม (ช่วงที่เลือก)</p>
-          <h2 className="text-xl font-bold text-emerald-700">{formatNumber(data.depositsInRange)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-emerald-700 ${cardNumClassAll}`}>{formatNumber(data.depositsInRange)}</h2>
           <p className="text-xs text-gray-400 mt-1">ตามช่วงวันที่เริ่มต้น–สิ้นสุด</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-green-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-green-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">กำไรสุทธิ (จากงบ P&L)</p>
-          <h2 className={`text-xl font-bold ${Number(data.pnlNetProfit) >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatNumber(data.pnlNetProfit)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll} ${Number(data.pnlNetProfit) >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatNumber(data.pnlNetProfit)}</h2>
           <p className="text-xs text-gray-400 mt-1">ตามช่วงเวลาที่เลือก</p>
         </div>
       </section>
@@ -384,7 +405,8 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
           <div className="flex items-end">
             <button
               onClick={() => loadDashboard(true)}
-              className="w-full md:w-auto bg-gray-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-800 transition"
+              className="w-full md:w-auto text-white px-6 py-3 rounded-lg font-bold transition hover:opacity-90"
+              style={{ backgroundColor: '#1a4781' }}
             >
               <i className="fas fa-search mr-2"></i>ค้นหา
             </button>
@@ -396,7 +418,7 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
       <section className="desktop-only bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-200 bg-gray-50">
           <h2 className="text-lg font-bold text-gray-800 flex items-center">
-            <i className="fas fa-table mr-2 text-blue-600"></i>
+            <i className="fas fa-table mr-2" style={{ color: '#1a4781' }}></i>
             ตารางข้อมูลยอดขาย
           </h2>
         </div>
@@ -475,11 +497,11 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
         </div>
       </section>
 
-      {/* Charts */}
-      <section className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
+      {/* Charts - ปรับให้พอดีจอมือถือแนวตั้ง/แนวนอน */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-full min-w-0 overflow-hidden">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow-md border border-gray-200 w-full max-w-full min-w-0 overflow-hidden">
           <h3 className="font-bold mb-4 text-gray-800 text-sm uppercase">แนวโน้มยอดขาย</h3>
-          <div className="h-64">
+          <div className="w-full max-w-full min-w-0 h-48 sm:h-56 md:h-64" style={{ position: 'relative' }}>
             {data.charts?.line?.labels && data.charts.line.labels.length > 0 ? (
               <Line data={lineChartData} options={lineChartOptions} />
             ) : (
@@ -490,9 +512,9 @@ function Dashboard({ overrideBranchCode, overrideBranchName }) {
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow-md border border-gray-200 w-full max-w-full min-w-0 overflow-hidden">
           <h3 className="font-bold mb-4 text-gray-800 text-sm uppercase">ช่องทางชำระเงิน</h3>
-          <div className="h-64 flex justify-center">
+          <div className="w-full max-w-full min-w-0 h-48 sm:h-56 md:h-64 flex justify-center" style={{ position: 'relative' }}>
             {data.charts?.pie?.data && data.charts.pie.data.some(d => d > 0) ? (
               <Doughnut data={pieChartData} options={pieChartOptions} />
             ) : (

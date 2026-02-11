@@ -27,7 +27,7 @@ git --version
 2. คลิก **"+"** มุมขวาบน → **"New repository"**
 3. ตั้งค่า:
    - **Repository name:** เช่น `sales-report` (หรือชื่ออื่น)
-   - **Description:** (ไม่บังคับ) เช่น "Sales Report - React + Supabase"
+   - **Description:** (ไม่บังคับ) เช่น "KebYod App - React + Supabase"
    - **Public** หรือ **Private** ตามต้องการ
    - **ไม่ต้อง** ติ๊ก "Add a README" หรือ ".gitignore" (เพราะในโฟลเดอร์มีอยู่แล้ว)
 4. คลิก **"Create repository"**
@@ -61,7 +61,7 @@ git status
 ```bash
 git init
 git add .
-git commit -m "Initial commit - Sales Report React app"
+git commit -m "Initial commit - KebYod App"
 git branch -M main
 ```
 

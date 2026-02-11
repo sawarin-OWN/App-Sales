@@ -15,7 +15,7 @@
 
 .tab-btn {
   transition: all 0.2s;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .tab-btn:hover {
@@ -23,8 +23,8 @@
 }
 
 .tab-btn.active {
-  color: #ffffff;
-  border-bottom-color: #ffffff !important;
+  color: #86efac !important;
+  border-bottom-color: #4CAF50 !important;
 }
 
 .tab-content {

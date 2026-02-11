@@ -46,35 +46,37 @@ function Login() {
     }
   };
 
+  const appIconUrl = 'https://arilermjxqvmkvmzzzpz.supabase.co/storage/v1/object/public/Icon/MENU%20(7).png';
+
   return (
-    <div className="h-dvh bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 flex items-center justify-center p-4">
+    <div className="h-dvh flex items-center justify-center p-4" style={{ backgroundColor: '#f0fdf4' }}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fade-in">
         <div className="text-center mb-8">
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
-            <i className="fas fa-store text-3xl text-white"></i>
+          <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center rounded-2xl overflow-hidden shadow-lg bg-white">
+            <img src={appIconUrl} alt="KebYod" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Sales Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">KebYod App</h1>
           <p className="text-gray-600 text-sm">เข้าสู่ระบบเพื่อบันทึกข้อมูลยอดขาย</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              <i className="fas fa-envelope mr-2 text-emerald-600"></i>อีเมล
+              <i className="fas fa-envelope mr-2 text-yod-green"></i>อีเมล
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full border-2 border-gray-300 rounded-lg p-3 mobile-input focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
+              className="w-full border-2 border-gray-300 rounded-lg p-3 mobile-input focus:border-yod-green focus:ring-2 focus:ring-yod-green-pale outline-none"
               placeholder="กรุณากรอกอีเมล"
             />
           </div>
 
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              <i className="fas fa-lock mr-2 text-emerald-600"></i>รหัสผ่าน
+              <i className="fas fa-lock mr-2 text-yod-green"></i>รหัสผ่าน
             </label>
             <div className="relative">
               <input
@@ -82,7 +84,7 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full border-2 border-gray-300 rounded-lg p-3 mobile-input focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none pr-12"
+                className="w-full border-2 border-gray-300 rounded-lg p-3 mobile-input focus:border-yod-green focus:ring-2 focus:ring-yod-green-pale outline-none pr-12"
                 placeholder="กรุณากรอกรหัสผ่าน"
               />
               <button
@@ -103,7 +105,8 @@ function Login() {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-lg shadow-lg hover:from-emerald-600 hover:to-teal-700 transition active:scale-95 text-lg"
+            className="w-full text-white font-bold py-4 rounded-lg shadow-lg transition active:scale-95 text-lg hover:opacity-95 bg-yod-green"
+            style={{ backgroundColor: '#4CAF50' }}
           >
             <i className="fas fa-sign-in-alt mr-2"></i>
             เข้าสู่ระบบ

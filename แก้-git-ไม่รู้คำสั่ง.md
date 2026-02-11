@@ -30,7 +30,7 @@ PowerShell ไม่รู้คำสั่ง `git` แปลว่าเค�
 
 ### 5. Commit ไฟล์ทั้งหมด
 - ทางซ้ายจะเห็นรายการไฟล์ที่เปลี่ยน
-- ด้านล่างซ้าย ช่อง **Summary** ใส่: `Initial commit - Sales Report`
+- ด้านล่างซ้าย ช่อง **Summary** ใส่: `Initial commit - KebYod App`
 - กดปุ่ม **Commit to main**
 
 ### 6. Publish / Push ไป GitHub
@@ -61,7 +61,7 @@ PowerShell ไม่รู้คำสั่ง `git` แปลว่าเค�
 3. กด **Add repository**
 4. ถ้าขึ้นว่า **"This directory does not appear to be a Git repository"**  
    → กด **create a repository** → Name: `sales-report` → **Create repository**
-5. ทางซ้ายจะเห็นไฟล์เยอะ (changed files) → ช่อง **Summary** ใส่ `Initial commit - Sales Report` → กด **Commit to main**
+5. ทางซ้ายจะเห็นไฟล์เยอะ (changed files) → ช่อง **Summary** ใส่ `Initial commit - KebYod App` → กด **Commit to main**
 6. เมนู **Repository** → **Push origin** หรือปุ่ม **Publish repository**  
    → Owner: **saocafe31-pixel**, Name: **sales-report** → Publish
 7. เปิด https://github.com/saocafe31-pixel/sales-report ตรวจว่าเห็นโค้ดแล้ว ไป Deploy Vercel ต่อ
@@ -89,7 +89,7 @@ git --version
 cd "c:\Users\ST36\Desktop\SALEs REPORT - Clone"
 git init
 git add .
-git commit -m "Initial commit - Sales Report React app"
+git commit -m "Initial commit - KebYod App"
 git branch -M main
 git remote add origin https://github.com/saocafe31-pixel/sales-report.git
 git push -u origin main

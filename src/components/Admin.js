@@ -566,6 +566,25 @@ function Admin() {
     return parseFloat(num || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  // ขนาดตัวเลขในการ์ด: ใช้ขนาดเดียวกันทุกการ์ด แสดงเต็มไม่ซ่อน เล็กลงเมื่อตัวเลขยาวเพื่อให้พอดีการ์ด
+  const cardNumClassFromLen = (len) => {
+    if (len <= 6) return 'text-xl md:text-2xl';
+    if (len <= 9) return 'text-base md:text-lg';
+    if (len <= 12) return 'text-sm md:text-base';
+    if (len <= 15) return 'text-xs md:text-sm';
+    return 'text-xs';
+  };
+  const adminCardValues = [
+    formatNumber(data.totalSales),
+    formatNumber(data.netProfit),
+    formatNumber(data.totalExpenses),
+    formatNumber(data.totalRecords),
+    formatNumber(depositData.totalDeposits),
+    formatNumber(depositData.totalPendingBalance)
+  ];
+  const adminMaxCardLen = Math.max(0, ...adminCardValues.map(s => (s || '').length));
+  const cardNumClassAll = cardNumClassFromLen(adminMaxCardLen);
+
   // Memoize chart data
   const lineChartData = useMemo(() => ({
     labels: data.charts?.line?.labels || [],
@@ -584,22 +603,19 @@ function Admin() {
   const lineChartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
+    layout: { padding: { top: 4, right: 8, bottom: 4, left: 4 } },
     interaction: {
       mode: 'index',
       intersect: false
     },
     plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false
-      }
+      legend: { display: false },
+      tooltip: { mode: 'index', intersect: false }
     },
     scales: {
       x: {
-        display: true
+        display: true,
+        ticks: { maxRotation: 45, minRotation: 0, maxTicksLimit: 8 }
       },
       y: {
         display: true,
@@ -621,12 +637,15 @@ function Admin() {
   const pieChartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
+    layout: { padding: { top: 8, right: 8, bottom: 8, left: 8 } },
     plugins: {
       legend: {
         position: 'bottom',
         labels: {
-          padding: 15,
-          usePointStyle: true
+          padding: 10,
+          usePointStyle: true,
+          boxWidth: 12,
+          font: { size: 11 }
         }
       },
       tooltip: {
@@ -850,12 +869,12 @@ function Admin() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-xl shadow-lg">
+      <div className="text-white p-6 rounded-xl shadow-lg" style={{ background: 'linear-gradient(90deg, #1a4781, #234b75)' }}>
         <h1 className="text-3xl font-bold mb-2 flex items-center">
           <i className="fas fa-user-shield mr-3"></i>
           ระบบจัดการหลังบ้าน (Admin)
         </h1>
-        <p className="text-purple-100">ตรวจสอบและแก้ไขข้อมูลทุกสาขา • งบกำไรขาดทุน • แดชบอร์ดสรุป P&L</p>
+        <p className="opacity-90">ตรวจสอบและแก้ไขข้อมูลทุกสาขา • งบกำไรขาดทุน • แดชบอร์ดสรุป P&L</p>
       </div>
 
       {/* แท็บหลัก: หลังบ้าน | แดชบอร์ด P&L */}
@@ -863,14 +882,14 @@ function Admin() {
         <button
           type="button"
           onClick={() => setAdminSection('backoffice')}
-          className={`flex-1 px-6 py-4 font-bold text-sm transition ${adminSection === 'backoffice' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`flex-1 px-6 py-4 font-bold text-sm transition ${adminSection === 'backoffice' ? 'bg-keb-blue text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
         >
           <i className="fas fa-building mr-2"></i>หลังบ้าน + งบกำไรขาดทุน
         </button>
         <button
           type="button"
           onClick={() => setAdminSection('pnl-dashboard')}
-          className={`flex-1 px-6 py-4 font-bold text-sm transition ${adminSection === 'pnl-dashboard' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`flex-1 px-6 py-4 font-bold text-sm transition ${adminSection === 'pnl-dashboard' ? 'bg-keb-blue text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
         >
           <i className="fas fa-chart-bar mr-2"></i>แดชบอร์ดสรุป P&L
         </button>
@@ -909,7 +928,7 @@ function Admin() {
             {pnlDashboardCompareYearMonth && (
               <input type="month" value={pnlDashboardCompareYearMonth} onChange={(e) => setPnlDashboardCompareYearMonth(e.target.value || '')} className="border-2 border-gray-300 rounded-lg px-3 py-2" />
             )}
-            <button type="button" onClick={loadPnlDashboardData} disabled={loadingPnlDashboard} className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50">
+            <button type="button" onClick={loadPnlDashboardData} disabled={loadingPnlDashboard} className="bg-keb-blue text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50">
               {loadingPnlDashboard ? 'กำลังโหลด...' : 'โหลดข้อมูล'}
             </button>
           </div>
@@ -917,7 +936,7 @@ function Admin() {
             <>
               <div className="overflow-x-auto border border-gray-200 rounded-lg">
                 <table className="w-full text-sm">
-                  <thead className="bg-indigo-100">
+                  <thead className="bg-keb-blue/10">
                     <tr>
                       <th className="px-3 py-2 text-left font-bold">สาขา</th>
                       <th className="px-3 py-2 text-right font-bold">ยอดขายรวม</th>
@@ -928,7 +947,7 @@ function Admin() {
                       <th className="px-3 py-2 text-right font-bold">กำไรสุทธิ</th>
                       {pnlDashboardData[0]?.hasCompare && (
                         <>
-                          <th className="px-3 py-2 text-right font-bold border-l border-indigo-200">ยอดขาย (เทียบ)</th>
+                          <th className="px-3 py-2 text-right font-bold border-l border-gray-200">ยอดขาย (เทียบ)</th>
                           <th className="px-3 py-2 text-right font-bold">กำไรสุทธิ (เทียบ)</th>
                         </>
                       )}
@@ -1066,7 +1085,7 @@ function Admin() {
                             setShowBranchSelector(false);
                           }
                         }}
-                        className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition"
+                        className="flex-1 bg-keb-blue text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition"
                         disabled={selectedBranches.length === 0}
                       >
                         ตกลง ({selectedBranches.length})
@@ -1122,7 +1141,7 @@ function Admin() {
               loadAdminData(true);
               loadDepositData(true);
             }}
-            className="w-full md:w-auto bg-purple-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-700 transition"
+            className="w-full md:w-auto bg-keb-blue text-white px-6 py-3 rounded-lg font-bold hover:opacity-90 transition"
           >
             <i className="fas fa-search mr-2"></i>ค้นหา
           </button>
@@ -1137,9 +1156,9 @@ function Admin() {
       {/* เลือกสาขาเดียวแล้วเข้าไปแก้ไขข้อมูลสาขานั้น — กรอกยอดขาย, ลบ/แก้ ค่าใช้จ่าย, นำฝาก, ใบกำกับ, งบกำไรขาดทุน */}
       {selectedBranches.length === 1 && (
         <div className="bg-white rounded-xl shadow-md border-2 border-purple-200 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 bg-purple-50">
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800 flex items-center">
-              <i className="fas fa-edit mr-2 text-purple-600"></i>
+              <i className="fas fa-edit mr-2 text-keb-blue"></i>
               เข้าไปแก้ไขข้อมูลสาขา: {branches.find(b => b.code === selectedBranches[0])?.name || selectedBranches[0]} ({selectedBranches[0]})
             </h2>
             <p className="text-sm text-gray-600 mt-1">ดึงหน้าผู้ใช้มาให้แอดมินกรอก/แก้ไข/ลบได้</p>
@@ -1157,7 +1176,7 @@ function Admin() {
                 key={tab.id}
                 type="button"
                 onClick={() => setAdminEditTab(tab.id)}
-                className={`flex-none px-4 py-3 text-sm font-bold border-b-2 whitespace-nowrap ${adminEditTab === tab.id ? 'border-purple-600 text-purple-600 bg-white' : 'border-transparent text-gray-600 hover:bg-gray-100'}`}
+                className={`flex-none px-4 py-3 text-sm font-bold border-b-2 whitespace-nowrap ${adminEditTab === tab.id ? 'border-keb-blue text-keb-blue bg-white' : 'border-transparent text-gray-600 hover:bg-gray-100'}`}
               >
                 <i className={`fas ${tab.icon} mr-2`}></i>{tab.label}
               </button>
@@ -1176,29 +1195,29 @@ function Admin() {
 
       {/* Dashboard Cards */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-purple-600 to-purple-700 text-white p-5 rounded-xl shadow-lg">
-          <div className="flex justify-between items-start">
-            <div>
+        <div className="bg-gradient-to-br from-keb-blue to-keb-blue-light text-white p-5 rounded-xl shadow-lg">
+          <div className="flex justify-between items-start gap-2 min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-xs opacity-90 uppercase tracking-wide mb-1">ยอดขายรวม</p>
-              <h2 className="text-2xl md:text-3xl font-bold">{formatNumber(data.totalSales)}</h2>
+              <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll}`}>{formatNumber(data.totalSales)}</h2>
             </div>
-            <i className="fas fa-wallet text-3xl opacity-20"></i>
+            <i className="fas fa-wallet text-3xl opacity-20 flex-shrink-0"></i>
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
+        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">กำไรสุทธิ</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-green-600">{formatNumber(data.netProfit)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-green-600 ${cardNumClassAll}`}>{formatNumber(data.netProfit)}</h2>
         </div>
         
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-red-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-red-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase mb-1">ค่าใช้จ่าย</p>
-          <h2 className="text-xl font-bold text-red-600">{formatNumber(data.totalExpenses)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-red-600 ${cardNumClassAll}`}>{formatNumber(data.totalExpenses)}</h2>
         </div>
         
-        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-orange-500">
+        <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-orange-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase mb-1">จำนวนรายการ</p>
-          <h2 className="text-xl font-bold text-orange-600">{formatNumber(data.totalRecords)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-orange-600 ${cardNumClassAll}`}>{formatNumber(data.totalRecords)}</h2>
         </div>
       </section>
 
@@ -1207,7 +1226,7 @@ function Admin() {
         <section className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
           <div className="p-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800 flex items-center">
-              <i className="fas fa-building mr-2 text-purple-600"></i>
+              <i className="fas fa-building mr-2 text-keb-blue"></i>
               สรุปยอดตามสาขา
             </h2>
           </div>
@@ -1257,18 +1276,18 @@ function Admin() {
       {/* Deposit Cards */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-gradient-to-br from-green-600 to-green-700 text-white p-5 rounded-xl shadow-lg">
-          <div className="flex justify-between items-start">
-            <div>
+          <div className="flex justify-between items-start gap-2 min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-xs opacity-90 uppercase tracking-wide mb-1">ยอดนำฝากรวม</p>
-              <h2 className="text-2xl md:text-3xl font-bold">{formatNumber(depositData.totalDeposits)}</h2>
+              <h2 className={`font-bold whitespace-nowrap min-w-0 ${cardNumClassAll}`}>{formatNumber(depositData.totalDeposits)}</h2>
             </div>
-            <i className="fas fa-university text-3xl opacity-20"></i>
+            <i className="fas fa-university text-3xl opacity-20 flex-shrink-0"></i>
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-xl shadow-md border-l-4 border-yellow-500">
+        <div className="bg-white p-5 rounded-xl shadow-md border-l-4 border-yellow-500 min-w-0">
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">ยอดเงินค้างฝากสะสม</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-yellow-600">{formatNumber(depositData.totalPendingBalance)}</h2>
+          <h2 className={`font-bold whitespace-nowrap min-w-0 text-yellow-600 ${cardNumClassAll}`}>{formatNumber(depositData.totalPendingBalance)}</h2>
         </div>
       </section>
 
@@ -1374,7 +1393,7 @@ function Admin() {
 
       {/* งบกำไรขาดทุน (แต่ละสาขา) */}
       <section className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-indigo-50">
+        <div className="p-4 border-b border-gray-200 bg-gray-50">
           <h2 className="text-lg font-bold text-gray-800 flex items-center">
             <i className="fas fa-file-invoice-dollar mr-2 text-indigo-600"></i>
             งบกำไรขาดทุนของแต่ละสาขา
@@ -1410,7 +1429,7 @@ function Admin() {
                 </select>
               </div>
               {pnlBranch ? (
-                <div className="border border-indigo-200 rounded-lg overflow-hidden">
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <ProfitLoss
                     overrideBranchCode={pnlBranch}
                     overrideBranchName={branches.find(b => b.code === pnlBranch)?.name || pnlBranch}
@@ -1452,30 +1471,30 @@ function Admin() {
                 {pnlCompareYearMonth && (
                   <input type="month" value={pnlCompareYearMonth} onChange={(e) => setPnlCompareYearMonth(e.target.value || '')} className="border-2 border-gray-300 rounded-lg px-3 py-2" />
                 )}
-                <button type="button" onClick={loadPnlCompareData} disabled={loadingPnlCompare || !pnlCompareBranches.length} className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50">
+                <button type="button" onClick={loadPnlCompareData} disabled={loadingPnlCompare || !pnlCompareBranches.length} className="bg-keb-blue text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50">
                   {loadingPnlCompare ? 'กำลังโหลด...' : 'โหลดข้อมูลเทียบ'}
                 </button>
               </div>
               {pnlCompareData.length > 0 && (
                 <div className="overflow-x-auto border border-gray-200 rounded-lg">
                   <table className="w-full text-sm">
-                    <thead className="bg-indigo-100">
+                    <thead className="bg-keb-blue/10">
                       <tr>
                         <th className="px-3 py-2 text-left font-bold">รายการ</th>
                         {pnlCompareData.map((b) => (
-                          <th key={b.branchCode} colSpan={b.hasCompare ? 2 : 1} className="px-3 py-2 text-center font-bold border-l border-indigo-200">
+                          <th key={b.branchCode} colSpan={b.hasCompare ? 2 : 1} className="px-3 py-2 text-center font-bold border-l border-gray-200">
                             {b.branchName} ({b.branchCode})
                             {b.hasCompare && <span className="block text-xs font-normal text-gray-600">{pnlYearMonthLabel} / {pnlCompareYearMonthLabel}</span>}
                           </th>
                         ))}
                       </tr>
                       {pnlCompareData[0]?.hasCompare && (
-                        <tr className="bg-indigo-50 text-xs">
+                        <tr className="bg-gray-50 text-xs">
                           <th className="px-3 py-1"></th>
                           {pnlCompareData.map((b) => (
                             <React.Fragment key={b.branchCode}>
-                              <th className="px-3 py-1 text-center border-l border-indigo-200">{pnlYearMonthLabel}</th>
-                              <th className="px-3 py-1 text-center border-l border-indigo-200">{pnlCompareYearMonthLabel}</th>
+                              <th className="px-3 py-1 text-center border-l border-gray-200">{pnlYearMonthLabel}</th>
+                              <th className="px-3 py-1 text-center border-l border-gray-200">{pnlCompareYearMonthLabel}</th>
                             </React.Fragment>
                           ))}
                         </tr>
@@ -1510,11 +1529,11 @@ function Admin() {
         </div>
       </section>
 
-      {/* Charts */}
-      <section className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
+      {/* Charts - ปรับให้พอดีจอแนวตั้ง/แนวนอน */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-full min-w-0 overflow-hidden">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow-md border border-gray-200 w-full max-w-full min-w-0 overflow-hidden">
           <h3 className="font-bold mb-4 text-gray-800 text-sm uppercase">แนวโน้มยอดขาย</h3>
-          <div className="h-64">
+          <div className="w-full max-w-full min-w-0 h-48 sm:h-56 md:h-64" style={{ position: 'relative' }}>
             {data.charts?.line?.labels && data.charts.line.labels.length > 0 ? (
               <Line data={lineChartData} options={lineChartOptions} />
             ) : (
@@ -1525,9 +1544,9 @@ function Admin() {
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow-md border border-gray-200 w-full max-w-full min-w-0 overflow-hidden">
           <h3 className="font-bold mb-4 text-gray-800 text-sm uppercase">ช่องทางชำระเงิน</h3>
-          <div className="h-64 flex justify-center">
+          <div className="w-full max-w-full min-w-0 h-48 sm:h-56 md:h-64 flex justify-center" style={{ position: 'relative' }}>
             {data.charts?.pie?.data && data.charts.pie.data.some(d => d > 0) ? (
               <Doughnut data={pieChartData} options={pieChartOptions} />
             ) : (

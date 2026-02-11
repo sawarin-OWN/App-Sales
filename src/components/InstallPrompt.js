@@ -104,7 +104,7 @@ function InstallPrompt() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 shadow-lg z-50 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 text-white p-4 shadow-lg z-50 md:hidden" style={{ background: 'linear-gradient(90deg, #1a4781, #4CAF50)' }}>
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex-1">
           <p className="font-bold text-sm mb-1">
@@ -118,7 +118,7 @@ function InstallPrompt() {
         <div className="flex items-center space-x-2 ml-4">
           <button
             onClick={handleInstall}
-            className="bg-white text-emerald-600 font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition"
+            className="bg-white font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition text-yod-green"
           >
             <i className="fas fa-plus-circle mr-1"></i>
             เพิ่ม
