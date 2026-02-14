@@ -340,7 +340,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
     .comp-table .cell.loss { color: #b91c1c; font-weight: 600; }
     .cell.negative { color: #b91c1c !important; font-weight: 600; }
     .cell.positive { color: #047857 !important; font-weight: 600; }
-    .footer-note { margin-top: 6px; font-size: 9px; color: #9ca3af; text-align: center; }
+    .footer-note { margin-top: 2em; font-size: 9px; color: #9ca3af; text-align: center; }
     @media print {
       body { padding: 0; font-size: 9px; }
       .header { margin-bottom: 4px; padding-bottom: 4px; }
