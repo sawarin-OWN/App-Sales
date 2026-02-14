@@ -412,8 +412,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
 
   <section>
     <h2 class="section-title">ส่วนที่ 3 กำไรขั้นต้น</h2>
-    <p style="margin:0 0 2px 0; color:#6b7280; font-size:9px;">ยอดขายหลังหักส่วนลด − ต้นทุนสินค้าขาย (COGS)</p>
-    ${hasCompare ? (() => { const d = diff(grossProfit, compareGrossProfit); return `<table><thead><tr><th class="cell">รายการ</th><th class="cell num">${monthLabel}</th><th class="cell num">${compareMonthLabel}</th><th class="cell num">ผลต่าง</th><th class="cell num pct">% เปลี่ยน</th></tr></thead><tbody><tr><td class="cell">กำไรขั้นต้น</td><td class="cell num">${formatNum(grossProfit)}</td><td class="cell num">${formatNum(compareGrossProfit)}</td><td class="cell num${diffClass(d)}">${d >= 0 ? '+' : ''}${formatNum(d)}</td><td class="cell num pct${pctClass(grossProfit, compareGrossProfit)}">${pctChange(grossProfit, compareGrossProfit)}</td></tr></tbody></table>`; })() : `<p class="highlight ${grossProfit >= 0 ? 'profit' : 'loss'}">${formatNum(grossProfit)} <span class="pct">(${pct(grossProfit, baseRevenue)})</span></p>`}
+    ${hasCompare ? (() => { const d = diff(grossProfit, compareGrossProfit); return `<table><thead><tr><th class="cell">รายการ</th><th class="cell num">${monthLabel}</th><th class="cell num">${compareMonthLabel}</th><th class="cell num">ผลต่าง</th><th class="cell num pct">% เปลี่ยน</th></tr></thead><tbody><tr><td class="cell">กำไรขั้นต้น</td><td class="cell num">${formatNum(grossProfit)}</td><td class="cell num">${formatNum(compareGrossProfit)}</td><td class="cell num${diffClass(d)}">${d >= 0 ? '+' : ''}${formatNum(d)}</td><td class="cell num pct${pctClass(grossProfit, compareGrossProfit)}">${pctChange(grossProfit, compareGrossProfit)}</td></tr></tbody></table>`; })() : `<table><tr><td class="cell">ยอดขายหลังหักส่วนลด − ต้นทุนสินค้าขาย (COGS)</td><td class="cell num ${grossProfit >= 0 ? 'positive' : 'negative'}">${formatNum(grossProfit)} (${pct(grossProfit, baseRevenue)})</td></tr></table>`}
   </section>
 
   <section>
@@ -428,8 +427,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
 
   <section>
     <h2 class="section-title">ส่วนที่ 5 กำไรสุทธิ (Net Profit)</h2>
-    <p style="margin:0 0 2px 0; color:#6b7280; font-size:9px;">กำไรขั้นต้น − ค่าใช้จ่ายในการดำเนินงาน</p>
-    ${hasCompare ? (() => { const d = diff(netProfit, compareNetProfit); return `<table><thead><tr><th class="cell">รายการ</th><th class="cell num">${monthLabel}</th><th class="cell num">${compareMonthLabel}</th><th class="cell num">ผลต่าง</th><th class="cell num pct">% เปลี่ยน</th></tr></thead><tbody><tr><td class="cell">กำไรสุทธิ</td><td class="${numClass(netProfit)}">${formatNum(netProfit)}</td><td class="${numClass(compareNetProfit)}">${formatNum(compareNetProfit)}</td><td class="cell num${diffClass(d)}">${d >= 0 ? '+' : ''}${formatNum(d)}</td><td class="cell num pct${pctClass(netProfit, compareNetProfit)}">${pctChange(netProfit, compareNetProfit)}</td></tr></tbody></table>`; })() : `<p class="highlight ${netProfit >= 0 ? 'profit' : 'loss'}">${formatNum(netProfit)} <span class="pct">(${pct(netProfit, baseRevenue)})</span></p>`}
+    ${hasCompare ? (() => { const d = diff(netProfit, compareNetProfit); return `<table><thead><tr><th class="cell">รายการ</th><th class="cell num">${monthLabel}</th><th class="cell num">${compareMonthLabel}</th><th class="cell num">ผลต่าง</th><th class="cell num pct">% เปลี่ยน</th></tr></thead><tbody><tr><td class="cell">กำไรสุทธิ</td><td class="${numClass(netProfit)}">${formatNum(netProfit)}</td><td class="${numClass(compareNetProfit)}">${formatNum(compareNetProfit)}</td><td class="cell num${diffClass(d)}">${d >= 0 ? '+' : ''}${formatNum(d)}</td><td class="cell num pct${pctClass(netProfit, compareNetProfit)}">${pctChange(netProfit, compareNetProfit)}</td></tr></tbody></table>`; })() : `<table><tr><td class="cell">กำไรขั้นต้น − ค่าใช้จ่ายในการดำเนินงาน</td><td class="cell num ${netProfit >= 0 ? 'positive' : 'negative'}">${formatNum(netProfit)} (${pct(netProfit, baseRevenue)})</td></tr></table>`}
   </section>
 
   <p class="footer-note">เอกสารนี้จัดทำจากระบบ KebYod App · ใช้สำหรับการอ้างอิงภายใน</p>
@@ -666,8 +664,12 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
           {/* ส่วนที่ 3 */}
           <section className="bg-white rounded-xl shadow p-6 border border-gray-200">
             <h3 className="text-lg font-bold text-gray-800 mb-2">ส่วนที่ 3 กำไรขั้นต้น</h3>
-            <p className="text-sm text-gray-600">ยอดขายหลังหักส่วนลด - ต้นทุนสินค้าขาย (COGS)</p>
-            <p className="text-xl font-bold text-green-700 mt-2 text-right">{formatNum(grossProfit)}</p>
+            <div className="flex justify-between items-center gap-4">
+              <p className="text-sm text-gray-600">ยอดขายหลังหักส่วนลด - ต้นทุนสินค้าขาย (COGS)</p>
+              <p className={`text-xl font-bold text-right whitespace-nowrap ${grossProfit >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                {formatNum(grossProfit)} ({((grossProfit / (salesAfterDiscount || 1)) * 100).toFixed(1)}%)
+              </p>
+            </div>
           </section>
 
           {/* ส่วนที่ 4 */}
@@ -706,8 +708,12 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
           {/* ส่วนที่ 5 */}
           <section className="bg-white rounded-xl shadow p-6 border-2 border-indigo-200">
             <h3 className="text-lg font-bold text-gray-800 mb-2">ส่วนที่ 5 กำไรสุทธิ (Net Profit)</h3>
-            <p className="text-sm text-gray-600">กำไรขั้นต้น - ค่าใช้จ่ายในการดำเนินงาน</p>
-            <p className={`text-2xl font-bold mt-2 text-right ${netProfit >= 0 ? 'text-green-700' : 'text-red-600'}`}>{formatNum(netProfit)}</p>
+            <div className="flex justify-between items-center gap-4">
+              <p className="text-sm text-gray-600">กำไรขั้นต้น - ค่าใช้จ่ายในการดำเนินงาน</p>
+              <p className={`text-2xl font-bold text-right whitespace-nowrap ${netProfit >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                {formatNum(netProfit)} ({((netProfit / (salesAfterDiscount || 1)) * 100).toFixed(1)}%)
+              </p>
+            </div>
           </section>
         </div>
       )}
