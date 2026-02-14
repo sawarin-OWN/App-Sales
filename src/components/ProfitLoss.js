@@ -327,7 +327,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
     .indent-sub { padding-left: 24px; }
     .row-total { font-weight: 700; background: #f8fafc; }
     .row-total .cell { padding: 2px 6px; border-bottom: 1px solid #e2e8f0; }
-    .highlight { font-size: 12px; font-weight: 700; margin: 0; }
+    .highlight { font-size: 12px; font-weight: 700; margin: 0; text-align: right; }
     .highlight.profit { color: #047857; }
     .highlight.loss { color: #b91c1c; }
     .highlight .pct { font-size: 10px; color: #6b7280; font-weight: 400; margin-left: 4px; }
@@ -667,7 +667,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
           <section className="bg-white rounded-xl shadow p-6 border border-gray-200">
             <h3 className="text-lg font-bold text-gray-800 mb-2">ส่วนที่ 3 กำไรขั้นต้น</h3>
             <p className="text-sm text-gray-600">ยอดขายหลังหักส่วนลด - ต้นทุนสินค้าขาย (COGS)</p>
-            <p className="text-xl font-bold text-green-700 mt-2">{formatNum(grossProfit)}</p>
+            <p className="text-xl font-bold text-green-700 mt-2 text-right">{formatNum(grossProfit)}</p>
           </section>
 
           {/* ส่วนที่ 4 */}
@@ -707,7 +707,7 @@ function ProfitLoss({ overrideBranchCode, overrideBranchName }) {
           <section className="bg-white rounded-xl shadow p-6 border-2 border-indigo-200">
             <h3 className="text-lg font-bold text-gray-800 mb-2">ส่วนที่ 5 กำไรสุทธิ (Net Profit)</h3>
             <p className="text-sm text-gray-600">กำไรขั้นต้น - ค่าใช้จ่ายในการดำเนินงาน</p>
-            <p className={`text-2xl font-bold mt-2 ${netProfit >= 0 ? 'text-green-700' : 'text-red-600'}`}>{formatNum(netProfit)}</p>
+            <p className={`text-2xl font-bold mt-2 text-right ${netProfit >= 0 ? 'text-green-700' : 'text-red-600'}`}>{formatNum(netProfit)}</p>
           </section>
         </div>
       )}
